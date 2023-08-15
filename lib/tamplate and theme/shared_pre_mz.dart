@@ -9,4 +9,12 @@ class SharedPreMz {
   static sharedPreMzGetGetMode() async {
     sharedPreference.getString('mode');
   }
+
+  static sharedPreMzSetLang({lang}) async {
+    await sharedPreference.setString('lang', lang ?? 'light');
+  }
+
+  static sharedPreMzGetGetLang() async {
+    sharedPreference.getString('lang');
+  }
 }
