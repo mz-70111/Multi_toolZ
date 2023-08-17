@@ -1,20 +1,28 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreMz {
-  static late SharedPreferences sharedPreference;
+  static late SharedPreferences sharedPreferenceMM;
   static sharedPreMzSetMode({mode}) async {
-    await sharedPreference.setString('mode', mode ?? 'light');
+    await sharedPreferenceMM.setString('mode', mode ?? 'light');
   }
 
-  static sharedPreMzGetGetMode() async {
-    sharedPreference.getString('mode');
+  static sharedPreMzGetMode() {
+    return sharedPreferenceMM.getString('mode');
   }
 
   static sharedPreMzSetLang({lang}) async {
-    await sharedPreference.setString('lang', lang ?? 'light');
+    await sharedPreferenceMM.setString('lang', lang ?? 'light');
   }
 
-  static sharedPreMzGetGetLang() async {
-    sharedPreference.getString('lang');
+  static sharedPreMzGetLang() {
+    return sharedPreferenceMM.getString('lang');
+  }
+
+  static sharedPreMzSetLogin({List<String>? login}) async {
+    await sharedPreferenceMM.setStringList('login', login!);
+  }
+
+  static sharedPreMzGetLogin() {
+    return sharedPreferenceMM.getStringList('login');
   }
 }

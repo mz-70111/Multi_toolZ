@@ -6,6 +6,7 @@ import 'package:multi_tools_mz/controllers/db_controller.dart';
 import 'package:multi_tools_mz/controllers/main_controller.dart';
 import 'package:multi_tools_mz/controllers/theme_controller.dart';
 import 'package:multi_tools_mz/pages/homepage.dart';
+import 'package:multi_tools_mz/pages/repairpage.dart';
 import 'package:multi_tools_mz/pages/login.dart';
 import 'package:multi_tools_mz/pages/splash_screen.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/theme_Mz.dart';
@@ -24,12 +25,13 @@ class MultiToolz extends StatelessWidget {
       init: themeController,
       builder: (_) => GetMaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeMz.theme(),
-        home: const HomePage(),
+        theme: ThemeMz.mode == "light" ? ThemeMz.lighttheme : ThemeMz.darktheme,
+        home: const RepairPage(),
         getPages: [
           GetPage(name: '/', page: (() => const SplashScreen())),
-          GetPage(name: '/home', page: (() => const HomePage())),
+          GetPage(name: '/repair', page: (() => const RepairPage())),
           GetPage(name: '/login', page: (() => const LogIn())),
+          GetPage(name: '/home', page: (() => const HomePage())),
         ],
       ),
     );

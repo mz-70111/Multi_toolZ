@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:multi_tools_mz/controllers/db_controller.dart';
 import 'package:multi_tools_mz/controllers/main_controller.dart';
-import 'package:multi_tools_mz/php_API/info_basic.dart';
+import 'package:multi_tools_mz/tamplate%20and%20theme/info_basic.dart';
 
 class DB {
   MainController mainController = Get.find();
@@ -13,6 +13,7 @@ class DB {
           'customquery': '''
 create table if not exists version
 (
+v_id int(11) unique primary key auto_increment,
 version varchar(255),
 android varchar(255),
 windows varchar(255),
@@ -25,7 +26,7 @@ skip tinyint(1) default 0
         url: "${InfoBasic.host}${InfoBasic.customquerypath}",
         data: {
           'customquery': '''
-insert into version (version,android,windows,skip)values('v_1.0.1',null,null,0);
+insert into version (v_id,version,android,windows,skip)values(1,'v_1.0.1',null,null,0);
 '''
         });
 
@@ -98,7 +99,7 @@ pbx tinyint(1) default 0
         url: "${InfoBasic.host}${InfoBasic.customquerypath}",
         data: {
           'customquery': '''
-insert into users_privileges(up_user_id,admin)values(1,1);
+insert into users_privileges(up_id,up_user_id,admin)values(1,1,1);
 '''
         });
 
@@ -251,6 +252,20 @@ commentdate TIMESTAMP  NULL DEFAULT NULL,
 table varchar(255),
 type varchar(20),
 idtype int(11)
+);
+'''
+        });
+
+    //create comment_table
+    await DBController().requestpost(
+        url: "${InfoBasic.host}${InfoBasic.customquerypath}",
+        data: {
+          'customquery': '''
+create table if not exists logs
+(
+log_id int(11) unique primary key auto_increment,
+log varchar(255),
+logdate TIMESTAMP  NULL DEFAULT NULL
 );
 '''
         });
