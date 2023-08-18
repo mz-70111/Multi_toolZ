@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:multi_tools_mz/controllers/main_controller.dart';
 import 'package:multi_tools_mz/pages/homepage.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/bottomnavbar.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/languages.dart';
@@ -46,12 +45,14 @@ class ThemeController extends GetxController {
     HomePage.modeicon =
         HomePage.modeicon == Icons.sunny ? Icons.dark_mode : Icons.sunny;
     for (var i in BottomNavBarMz.bottomnavitem) {
-      i['backcolor'] = ThemeMz.mode == 'light'
-          ? Colors.deepPurpleAccent.withOpacity(0.6)
-          : Colors.amberAccent.withOpacity(0.6);
+      i['backcolor'] = Colors.transparent;
+      i['bordercolor'] = Colors.transparent;
     }
     BottomNavBarMz.bottomnavitem[BottomNavBarMz.selecteditem]['backcolor'] =
-        ThemeMz.mode == 'light' ? Colors.white54 : Colors.black45;
+        ThemeMz.mode == 'light' ? Colors.white : Colors.black;
+    BottomNavBarMz.bottomnavitem[BottomNavBarMz.selecteditem]['bordercolor'] =
+        ThemeMz.mode == 'light' ? Colors.deepPurple : Colors.amberAccent;
+
     update();
   }
 }

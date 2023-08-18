@@ -35,6 +35,15 @@ class Lang {
     'drawerpersonalinfo': ['معلومات الحساب', 'Account Info'],
     'drawerpesonalchgpass': ['تغيير كلمة المرور', 'change password'],
     'logout': ['تسجيل الخروج', 'LogOut'],
-    'choselang': ['اختيار اللغة', 'chose language']
+    'choselang': ['اختيار اللغة', 'chose language'],
+    'offices': ['المكاتب', 'Offices'],
+    'accounts': ['الحسابات', 'Accounts'],
+    'tasks': ['المهمات', 'Tasks'],
+    'todo': ['الإجرائيات', ' WhattoTodo'],
+    'remind': ['التذكير', 'Remind'],
+    'ping': ['Ping', 'Ping'],
+    'checkemails': ['تفحص أخطاء البريد الالكتروني', 'Check Emails'],
+    'pbx': ['المقسم', 'PBX'],
+    'hlinks': ['روابط خارجية', 'Links'],
   };
 }

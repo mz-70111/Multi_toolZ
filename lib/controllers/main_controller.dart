@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -229,19 +230,30 @@ class MainController extends GetxController {
     update();
   }
 
-  navbaraction({x}) {
+  navbaraction({x}) async {
     for (var i in BottomNavBarMz.bottomnavitem) {
       i['angle'] = 0.0;
       i['y'] = 0.0;
-      i['backcolor'] = ThemeMz.mode == 'light'
-          ? Colors.deepPurpleAccent.withOpacity(0.6)
-          : Colors.amberAccent.withOpacity(0.6);
+      i['backcolor'] = Colors.transparent;
+      i['bordercolor'] = Colors.transparent;
     }
     BottomNavBarMz.bottomnavitem[x]['angle'] = 45.0;
     BottomNavBarMz.bottomnavitem[x]['y'] = -AppBar().preferredSize.height / 3;
     BottomNavBarMz.bottomnavitem[x]['backcolor'] =
-        ThemeMz.mode == 'light' ? Colors.white54 : Colors.black45;
+        ThemeMz.mode == 'light' ? Colors.white : Colors.black;
+    BottomNavBarMz.bottomnavitem[x]['bordercolor'] =
+        ThemeMz.mode == 'light' ? Colors.deepPurple : Colors.amberAccent;
     BottomNavBarMz.selecteditem = x;
+    await teststream();
     update();
+  }
+
+  teststream() {
+    StreamController streamController = StreamController<int>();
+    Stream stream = streamController.stream;
+    StreamSubscription sub = stream.listen((event) {
+      if (event < 10) print(event);
+    });
+    streamController.sink.add(1);
   }
 }
