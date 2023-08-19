@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:multi_tools_mz/controllers/chat_controller.dart';
 import 'package:multi_tools_mz/controllers/db_controller.dart';
 import 'package:multi_tools_mz/controllers/main_controller.dart';
 import 'package:multi_tools_mz/controllers/theme_controller.dart';
@@ -21,6 +22,7 @@ class MultiToolz extends StatelessWidget {
     ThemeController themeController = Get.put(ThemeController());
     MainController mainController = Get.put(MainController());
     DBController dbController = Get.put(DBController());
+    ChatController chatController = Get.put(ChatController());
     return GetBuilder<ThemeController>(
       init: themeController,
       builder: (_) => GetMaterialApp(

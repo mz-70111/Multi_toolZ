@@ -22,13 +22,13 @@ class ThemeMz {
               backgroundColor: MaterialStatePropertyAll(Colors.black26))),
       textTheme: const TextTheme(
           titleLarge: TextStyle(
-              fontFamily: "Marhey", fontSize: 17, color: Colors.amberAccent),
+              fontFamily: "Marhey", fontSize: 17, color: Colors.white60),
           titleMedium: TextStyle(
               fontFamily: "Marhey", fontSize: 15, color: Colors.amberAccent),
           labelMedium: TextStyle(
               fontFamily: "Marhey", fontSize: 20, color: Colors.yellowAccent),
           labelSmall: TextStyle(
-              fontFamily: "Marhey", fontSize: 15, color: Colors.yellowAccent)));
+              fontFamily: "Marhey", fontSize: 13, color: Colors.white)));
 
   static ThemeData lighttheme = ThemeData(
       colorScheme: const ColorScheme(
@@ -50,13 +50,11 @@ class ThemeMz {
               backgroundColor: MaterialStatePropertyAll(Colors.white))),
       textTheme: const TextTheme(
           titleLarge: TextStyle(
-              fontFamily: "Marhey",
-              fontSize: 17,
-              color: Colors.deepPurpleAccent),
+              fontFamily: "Marhey", fontSize: 17, color: Colors.black),
           titleMedium: TextStyle(
               fontFamily: "Marhey", fontSize: 15, color: Colors.indigo),
           labelMedium: TextStyle(
               fontFamily: "Marhey", fontSize: 20, color: Colors.indigo),
           labelSmall: TextStyle(
-              fontFamily: "Marhey", fontSize: 15, color: Colors.indigoAccent)));
+              fontFamily: "Marhey", fontSize: 13, color: Colors.black)));
 }

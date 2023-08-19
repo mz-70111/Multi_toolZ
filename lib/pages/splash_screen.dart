@@ -34,11 +34,13 @@ class SplashScreen extends StatelessWidget {
       ])),
       const Divider(),
       Row(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            "Developed by: M",
-            style: Theme.of(context).textTheme.labelSmall,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "by:",
+              style: Theme.of(context).textTheme.labelSmall,
+            ),
           ),
           TweenMz.opacitiy(
               durationinmilliseconds: 1000,
@@ -46,10 +48,6 @@ class SplashScreen extends StatelessWidget {
                 "معاذ الحوراني",
                 style: Theme.of(context).textTheme.labelSmall,
               )),
-          Text(
-            "Z",
-            style: Theme.of(context).textTheme.labelSmall,
-          )
         ],
       )
     ]));

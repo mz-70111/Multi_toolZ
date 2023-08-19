@@ -5,6 +5,8 @@ import 'package:multi_tools_mz/tamplate%20and%20theme/info_basic.dart';
 
 class DB {
   MainController mainController = Get.find();
+
+  static List userinfotable = [];
   createtables() async {
     //create version table
     await DBController().requestpost(
@@ -256,7 +258,7 @@ idtype int(11)
 '''
         });
 
-    //create comment_table
+    //create log_table
     await DBController().requestpost(
         url: "${InfoBasic.host}${InfoBasic.customquerypath}",
         data: {
@@ -266,6 +268,24 @@ create table if not exists logs
 log_id int(11) unique primary key auto_increment,
 log varchar(255),
 logdate TIMESTAMP  NULL DEFAULT NULL
+);
+'''
+        });
+
+    //create chat_table
+    await DBController().requestpost(
+        url: "${InfoBasic.host}${InfoBasic.customquerypath}",
+        data: {
+          'customquery': '''
+create table if not exists chat
+(
+chat_id int(11) unique primary key auto_increment,
+sender_id int(11),
+foreign key (sender_id) references users(user_id),
+reciever_id int(11),
+foreign key (reciever_id) references users(user_id),
+msg varchar(255),
+readstatus tinyint(1) 
 );
 '''
         });

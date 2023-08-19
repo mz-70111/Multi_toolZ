@@ -1,8 +1,8 @@
 <?php
 
 $sdn="mysql:host=192.168.30.8;dbname=mz_db";
-$username='mz';
-$password='mzrootmz';
+$username='root';
+$password='';
 $option=array (PDO::MYSQL_ATTR_INIT_COMMAND=>"SET NAMES UTF8",PDO::ATTR_TIMEOUT=>15);
 
 try{

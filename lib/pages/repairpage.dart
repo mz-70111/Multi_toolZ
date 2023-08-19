@@ -29,6 +29,7 @@ class RepairPage extends StatelessWidget {
                   mainController.waitcountdown();
                   return const SplashScreen();
                 } else if (!snap.hasData) {
+                  print('errr');
                   SplashScreen.waittime = 1;
                   return Center(
                     child: Column(

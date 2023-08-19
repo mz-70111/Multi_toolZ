@@ -122,10 +122,12 @@ class MainController extends GetxController {
         }
         LogIn.loginwait = false;
       } catch (e) {
+        print(e);
         LogIn.mainloginerrormsg =
             "${Lang.lang['mainloginerrormsg'][Lang.langlist.indexOf(Lang.selectlanguage)]}";
       }
     }
+    LogIn.loginwait = false;
     update();
   }
 
@@ -173,6 +175,7 @@ class MainController extends GetxController {
             "${Lang.lang['mainloginerrormsg'][Lang.langlist.indexOf(Lang.selectlanguage)]}";
       }
     }
+    LogIn.loginwait = false;
     update();
   }
 
@@ -244,16 +247,6 @@ class MainController extends GetxController {
     BottomNavBarMz.bottomnavitem[x]['bordercolor'] =
         ThemeMz.mode == 'light' ? Colors.deepPurple : Colors.amberAccent;
     BottomNavBarMz.selecteditem = x;
-    await teststream();
     update();
-  }
-
-  teststream() {
-    StreamController streamController = StreamController<int>();
-    Stream stream = streamController.stream;
-    StreamSubscription sub = stream.listen((event) {
-      if (event < 10) print(event);
-    });
-    streamController.sink.add(1);
   }
 }
