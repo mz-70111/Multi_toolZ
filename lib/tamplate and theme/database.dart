@@ -44,7 +44,8 @@ username varchar(255) unique,
 fullname varchar(255) unique,
 password varchar(255),
 email varchar(255),
-mobile varchar(255)
+mobile varchar(255),
+personalimg MediumBLOB
 );
 '''
         });
@@ -117,6 +118,7 @@ upo_user_id int(11),
 foreign key (upo_user_id) references users(user_id),
 upo_office_id int(11),
 foreign key (upo_office_id) references office(office_id),
+position varchar(11),
 addtask tinyint(1) default 0,
 addtodo tinyint(1) default 0,
 addremind tinyint(1) default 0,

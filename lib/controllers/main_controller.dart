@@ -122,7 +122,6 @@ class MainController extends GetxController {
         }
         LogIn.loginwait = false;
       } catch (e) {
-        print(e);
         LogIn.mainloginerrormsg =
             "${Lang.lang['mainloginerrormsg'][Lang.langlist.indexOf(Lang.selectlanguage)]}";
       }
@@ -229,7 +228,20 @@ class MainController extends GetxController {
     Get.offNamed('/login');
   }
 
-  chgpassfrompresonal() async {
+  chgpassfrompresonal({ctx}) async {
+    showDialog(
+        context: ctx,
+        builder: (_) {
+          return Directionality(
+            textDirection: Lang.selectlanguage == 'Ar'
+                ? TextDirection.rtl
+                : TextDirection.ltr,
+            child: AlertDialog(
+              title: Text(Lang.lang['changpasstitle']
+                  [Lang.langlist.indexOf(Lang.selectlanguage)]),
+            ),
+          );
+        });
     update();
   }
 
@@ -249,4 +261,6 @@ class MainController extends GetxController {
     BottomNavBarMz.selecteditem = x;
     update();
   }
+
+  showpersonalinfo({ctx}) {}
 }

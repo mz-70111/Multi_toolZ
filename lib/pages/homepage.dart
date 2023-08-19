@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:multi_tools_mz/controllers/db_controller.dart';
 import 'package:multi_tools_mz/controllers/main_controller.dart';
 import 'package:multi_tools_mz/controllers/theme_controller.dart';
 import 'package:multi_tools_mz/pages/login.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/bottomnavbar.dart';
+import 'package:multi_tools_mz/tamplate%20and%20theme/database.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/info_basic.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/languages.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/shared_pre_mz.dart';
@@ -17,6 +19,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     MainController mainController = Get.find();
     ThemeController themeController = Get.find();
+    DBController dbController = Get.find();
     List draweritems() => [
           {
             'title':
@@ -27,7 +30,7 @@ class HomePage extends StatelessWidget {
           {
             'title':
                 "${Lang.lang['drawerpesonalchgpass'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
-            'action': () {},
+            'action': () => mainController.chgpassfrompresonal(ctx: context),
             'icon': Icons.password
           },
           {
@@ -100,9 +103,10 @@ class HomePage extends StatelessWidget {
             'action': () {},
           }
         ];
-    return FutureBuilder(future: Future(() {
+    return FutureBuilder(future: Future(() async {
       LogIn.userinfo = SharedPreMz.sharedPreMzGetLogin();
       ThemeMz.mode = SharedPreMz.sharedPreMzGetMode() ?? 'light';
+      await dbController.getuserinfo(username: LogIn.userinfo![0]);
     }), builder: (_, snap) {
       if (LogIn.userinfo != null) {
         return GetBuilder<ThemeController>(
@@ -175,18 +179,17 @@ class HomePage extends StatelessWidget {
                                   maxCrossAxisExtent:
                                       MediaQuery.of(context).size.width / 2),
                           itemBuilder: (_, x) {
-                            return TweenMz.translatey(
-                                begin: -1000.0,
-                                end: 0.0,
-                                durationinmilliseconds: x * 200,
+                            return TweenMz.opacitiy(
+                                begin: 0.0,
+                                end: 1.0,
+                                durationinmilliseconds: (x + 2) * 300,
                                 child: MouseRegion(
                                     cursor: SystemMouseCursors.click,
                                     child: Card(
                                         elevation: 6,
                                         child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius: const BorderRadius
-                                                      .all(
+                                            decoration: const BoxDecoration(
+                                              borderRadius: BorderRadius.all(
                                                   Radius.elliptical(20, 10)),
                                             ),
                                             child: Row(

@@ -24,39 +24,56 @@ class DBController extends GetxController {
     return result;
   }
 
-  getuserinfo() async {
-    // List usermaininfo = await DBController().requestpost(
-    //     url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-    //     data: {'customquery': "select * from users;"});
-    // List user_privilege = await DBController().requestpost(
-    //     url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-    //     data: {
-    //       'customquery':
-    //           "select * from users_prvileges where up_user_id=${usermaininfo[0]['user_id']};"
-    //     });
-    List users__priv_office = await DBController().requestpost(
+  getuserinfo({username}) async {
+    List userMainInfo = await DBController().requestpost(
         url: "${InfoBasic.host}${InfoBasic.customquerypath}",
         data: {
-          'customquery': "select * from users_priv_office where upo_user_id=1;"
+          'customquery': "select * from users where username='$username';"
         });
-    print(users__priv_office);
-    // DB.userinfotable.clear();
-    // DB.userinfotable.add([]);
-    // DB.userinfotable[0].add({
-    //   'user_id': '${usermaininfo[0]['user_id']}',
-    //   'username': '${usermaininfo[0]['username']}',
-    //   'fullname': '${usermaininfo[0]['fullname']}',
-    //   'email': '${usermaininfo[0]['email']}',
-    //   'mobile': '${usermaininfo[0]['mobile']}',
-    //   'admin': '${user_privilege[0]['admin']}',
-    //   'enable': '${user_privilege[0]['enable']}',
-    //   'mustchgpass': '${user_privilege[0]['mustchgpass']}',
-    //   'pbx': '${user_privilege[0]['pbx']}',
-    // });
 
-    // if (users__priv_office != null) {
-    //   for (var i in users__priv_office) {}
-    //   DB.userinfotable[0].addAll({''});
-    // }
+    List userPrivilege = await DBController().requestpost(
+        url: "${InfoBasic.host}${InfoBasic.customquerypath}",
+        data: {
+          'customquery':
+              "select * from users_privileges where up_user_id=${userMainInfo[0]['user_id']};"
+        });
+
+    List usersPrivOffice = await DBController().requestpost(
+        url: "${InfoBasic.host}${InfoBasic.customquerypath}",
+        data: {
+          'customquery':
+              "select * from users_priv_office where upo_user_id=${userMainInfo[0]['user_id']};"
+        });
+    DB.userinfotable.clear();
+    DB.userinfotable.add([]);
+    DB.userinfotable[0] = {
+      'user_id': '${userMainInfo[0]['user_id']}',
+      'username': '${userMainInfo[0]['username']}',
+      'password': '${userMainInfo[0]['password']}',
+      'fullname': '${userMainInfo[0]['fullname']}',
+      'email': '${userMainInfo[0]['email']}',
+      'mobile': '${userMainInfo[0]['mobile']}',
+      'admin': '${userPrivilege[0]['admin']}',
+      'enable': '${userPrivilege[0]['enable']}',
+      'mustchgpass': '${userPrivilege[0]['mustchgpass']}',
+      'pbx': '${userPrivilege[0]['pbx']}',
+      'office_priv': []
+    };
+    if (usersPrivOffice.isNotEmpty) {
+      List officepriv = [];
+      officepriv.clear();
+      for (var i in usersPrivOffice) {
+        officepriv.add({});
+        officepriv[usersPrivOffice.indexOf(i)] = {
+          'office_id': i['upo_office_id'],
+          'position': i['position'],
+          'addtask': i['addtask'],
+          'addtodo': i['addtodo'],
+          'addremind': i['addremind'],
+          'addemailtest': i['addemailtest']
+        };
+      }
+      DB.userinfotable[0]['office_priv'] = officepriv;
+    }
   }
 }

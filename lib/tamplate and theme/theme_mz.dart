@@ -16,7 +16,7 @@ class ThemeMz {
           surface: Colors.orangeAccent,
           onSurface: Colors.amber),
       appBarTheme: const AppBarTheme(backgroundColor: Colors.black12),
-      iconTheme: IconThemeData(color: Colors.yellowAccent),
+      iconTheme: const IconThemeData(color: Colors.yellowAccent),
       elevatedButtonTheme: const ElevatedButtonThemeData(
           style: ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(Colors.black26))),
@@ -44,7 +44,7 @@ class ThemeMz {
           surface: Colors.orangeAccent,
           onSurface: Colors.indigoAccent),
       appBarTheme: const AppBarTheme(backgroundColor: Colors.white70),
-      iconTheme: IconThemeData(color: Colors.deepPurple),
+      iconTheme: const IconThemeData(color: Colors.deepPurple),
       elevatedButtonTheme: const ElevatedButtonThemeData(
           style: ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(Colors.white))),

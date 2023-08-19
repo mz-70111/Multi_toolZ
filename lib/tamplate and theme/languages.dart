@@ -45,5 +45,6 @@ class Lang {
     'checkemails': ['تفحص أخطاء البريد الالكتروني', 'Check Emails'],
     'pbx': ['المقسم', 'PBX'],
     'hlinks': ['روابط خارجية', 'Links'],
+    'changpasstitle': ['تغيير كلمة المرور', 'change password'],
   };
 }

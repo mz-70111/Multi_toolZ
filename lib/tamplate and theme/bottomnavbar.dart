@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:multi_tools_mz/controllers/chat_controller.dart';
 import 'package:multi_tools_mz/controllers/main_controller.dart';
 import 'package:multi_tools_mz/controllers/theme_controller.dart';
+import 'package:multi_tools_mz/tamplate%20and%20theme/database.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/theme_Mz.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/tween_mz.dart';
 
@@ -12,7 +13,7 @@ ThemeController themeController = Get.find();
 class BottomNavBarMz extends StatelessWidget {
   const BottomNavBarMz({super.key});
   static int selecteditem = 0;
-  static int? notifinum;
+  static int notifinum = 0;
   static List bottomnavitem = [
     {
       'visible': true,
@@ -52,7 +53,8 @@ class BottomNavBarMz extends StatelessWidget {
   ];
   @override
   Widget build(BuildContext context) {
-    ChatController chatControlle = Get.find();
+    ChatController chatController = Get.find();
+    notifinum = 0;
     return Container(
         decoration: BoxDecoration(
           color: ThemeMz.mode == 'light' ? Colors.white54 : Colors.black54,
@@ -64,75 +66,69 @@ class BottomNavBarMz extends StatelessWidget {
         height: AppBar().preferredSize.height,
         child: GetBuilder<MainController>(
             init: mainController,
-            builder: (_) => StreamBuilder(
-                  stream: Stream.periodic(
-                      Duration(seconds: 2),
-                      (a) async => notifinum =
-                          await chatControlle.getchatnotifi(reciver_id: 1)),
-                  builder: (_, snap) {
-                    return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ...bottomnavitem
-                              .where((e) => e['visible'] == true)
-                              .map((e) => TweenMz.rotate(
-                                  durationinmilliseconds: 300,
-                                  end: e['angle'],
-                                  child: TweenMz.translatey(
-                                      end: e['y'],
-                                      child: Container(
-                                          decoration: BoxDecoration(
-                                              boxShadow: [
-                                                BoxShadow(
-                                                    color: e['bordercolor'],
-                                                    offset: Offset(2, 2))
-                                              ],
-                                              color: e['backcolor'],
-                                              border: Border.all(
-                                                  width: 2,
-                                                  color: e['bordercolor']),
-                                              borderRadius: const BorderRadius
-                                                      .all(
-                                                  Radius.elliptical(10, 5))),
-                                          height: 50,
-                                          width: 50,
-                                          child: TweenMz.rotate(
-                                              durationinmilliseconds: 300,
-                                              end: -e['angle'],
-                                              child: IconButton(
-                                                icon: Stack(
-                                                  children: [
-                                                    Icon(
-                                                      e['icon'],
-                                                      color: ThemeMz.mode ==
-                                                              'light'
-                                                          ? Colors.deepPurple
-                                                          : Colors.yellowAccent,
-                                                    ),
-                                                    notifinum == null ||
-                                                            e['notifi'] == null
-                                                        ? const SizedBox()
-                                                        : Transform.translate(
-                                                            offset:
-                                                                const Offset(
-                                                                    -20.0,
-                                                                    -20.0),
-                                                            child: CircleAvatar(
-                                                                radius: 10,
-                                                                backgroundColor:
-                                                                    Colors.red,
-                                                                child: Text(
-                                                                  "$notifinum",
-                                                                  style: const TextStyle(
-                                                                      fontSize:
-                                                                          10),
-                                                                )))
-                                                  ],
-                                                ),
-                                                onPressed: e['action'],
-                                              ))))))
-                        ]);
-                  },
-                )));
+            builder: (_) {
+              return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ...bottomnavitem.where((e) => e['visible'] == true).map(
+                        (e) => TweenMz.rotate(
+                            durationinmilliseconds: 300,
+                            end: e['angle'],
+                            child: TweenMz.translatey(
+                                end: e['y'],
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                        boxShadow: [
+                                          BoxShadow(
+                                              color: e['bordercolor'],
+                                              offset: const Offset(2, 2))
+                                        ],
+                                        color: e['backcolor'],
+                                        border: Border.all(
+                                            width: 2, color: e['bordercolor']),
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.elliptical(10, 5))),
+                                    height: 50,
+                                    width: 50,
+                                    child: TweenMz.rotate(
+                                        durationinmilliseconds: 300,
+                                        end: -e['angle'],
+                                        child: IconButton(
+                                          icon: Stack(children: [
+                                            Icon(
+                                              e['icon'],
+                                              color: ThemeMz.mode == 'light'
+                                                  ? Colors.deepPurple
+                                                  : Colors.yellowAccent,
+                                            ),
+                                            innerChatnotifibuilder(
+                                                chatController, e)
+                                          ]),
+                                          onPressed: e['action'],
+                                        ))))))
+                  ]);
+            }));
+  }
+
+  innerChatnotifibuilder(ChatController chatController, e) {
+    return StreamBuilder(
+        stream: Stream.periodic(
+            const Duration(seconds: 2),
+            (a) async => notifinum = await chatController.getchatnotifi(
+                reciverid: DB.userinfotable[0]['user_id'])),
+        builder: (_, snap) {
+          if (snap.hasData && e['notifi'] != null && notifinum > 0) {
+            return Transform.translate(
+                offset: const Offset(-20.0, -20.0),
+                child: CircleAvatar(
+                    radius: 10,
+                    backgroundColor: Colors.red,
+                    child: Text(notifinum > 0 ? "$notifinum" : "",
+                        style: const TextStyle(
+                            fontSize: 10, color: Colors.white))));
+          } else {
+            return const SizedBox();
+          }
+        });
   }
 }
