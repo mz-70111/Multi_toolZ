@@ -24,13 +24,11 @@ class DBController extends GetxController {
     return result;
   }
 
-  getuserinfo({username}) async {
+  getuserinfo({userid}) async {
+    Map result = {};
     List userMainInfo = await DBController().requestpost(
         url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-        data: {
-          'customquery': "select * from users where username='$username';"
-        });
-
+        data: {'customquery': "select * from users where username='$userid';"});
     List userPrivilege = await DBController().requestpost(
         url: "${InfoBasic.host}${InfoBasic.customquerypath}",
         data: {
@@ -44,9 +42,8 @@ class DBController extends GetxController {
           'customquery':
               "select * from users_priv_office where upo_user_id=${userMainInfo[0]['user_id']};"
         });
-    DB.userinfotable.clear();
-    DB.userinfotable.add([]);
-    DB.userinfotable[0] = {
+    result.addAll({});
+    result[0] = {
       'user_id': '${userMainInfo[0]['user_id']}',
       'username': '${userMainInfo[0]['username']}',
       'password': '${userMainInfo[0]['password']}',
@@ -73,7 +70,15 @@ class DBController extends GetxController {
           'addemailtest': i['addemailtest']
         };
       }
-      DB.userinfotable[0]['office_priv'] = officepriv;
+      result[0]['office_priv'] = officepriv;
     }
+    print(result);
+    return result;
+  }
+
+  changpass({userid}) async {
+    List checkoldpass = await DBController().requestpost(
+        url: "${InfoBasic.host}${InfoBasic.customquerypath}",
+        data: {'customquery': "select * from users where user;"});
   }
 }

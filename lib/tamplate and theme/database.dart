@@ -6,7 +6,7 @@ import 'package:multi_tools_mz/tamplate%20and%20theme/info_basic.dart';
 class DB {
   MainController mainController = Get.find();
 
-  static List userinfotable = [];
+  static Map userinfotable = {};
   createtables() async {
     //create version table
     await DBController().requestpost(

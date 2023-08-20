@@ -106,7 +106,8 @@ class HomePage extends StatelessWidget {
     return FutureBuilder(future: Future(() async {
       LogIn.userinfo = SharedPreMz.sharedPreMzGetLogin();
       ThemeMz.mode = SharedPreMz.sharedPreMzGetMode() ?? 'light';
-      await dbController.getuserinfo(username: LogIn.userinfo![0]);
+      DB.userinfotable =
+          await dbController.getuserinfo(userid: LogIn.userinfo![2]);
     }), builder: (_, snap) {
       if (LogIn.userinfo != null) {
         return GetBuilder<ThemeController>(

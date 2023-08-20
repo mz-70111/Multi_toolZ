@@ -105,7 +105,8 @@ class MainController extends GetxController {
             if (accountstatus[0]['mustchgpass'] == '0') {
               await SharedPreMz.sharedPreMzSetLogin(login: [
                 userinfo[0]['username'],
-                LogIn.passwordcontroller.text
+                LogIn.passwordcontroller.text,
+                userinfo[0]['user_id']
               ]);
               LogIn.userinfo = SharedPreMz.sharedPreMzGetLogin();
               Get.offNamed('/home');
@@ -153,7 +154,8 @@ class MainController extends GetxController {
             if (accountstatus[0]['mustchgpass'] == '0') {
               await SharedPreMz.sharedPreMzSetLogin(login: [
                 userinfo[0]['username'],
-                LogIn.passwordcontroller.text
+                LogIn.passwordcontroller.text,
+                userinfo[0]['user_id']
               ]);
               LogIn.userinfo = SharedPreMz.sharedPreMzGetLogin();
               Get.offNamed('/home');
@@ -209,7 +211,12 @@ class MainController extends GetxController {
                   "update users_privileges set mustchgpass=0 where up_user_id=${userinfo![0]['user_id']};"
             });
         await SharedPreMz.sharedPreMzSetLogin(
-            login: [userinfo[0]['username'], LogIn.newpasswordcontroller.text]);
+          login: [
+            userinfo[0]['username'],
+            LogIn.newpasswordcontroller.text,
+            userinfo[0]['user_id']
+          ],
+        );
         LogIn.loginwait = false;
         LogIn.userinfo = SharedPreMz.sharedPreMzGetLogin();
         Get.offNamed('/home');
