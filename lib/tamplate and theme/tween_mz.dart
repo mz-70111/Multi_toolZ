@@ -69,8 +69,7 @@ class TweenMz {
         });
   }
 
-  static scale(
-      {begin = false, end = true, durationinmilliseconds = 100, child}) {
+  static scale({begin = 1, end = 2, durationinmilliseconds = 100, child}) {
     return TweenAnimationBuilder<double>(
         tween: Tween(begin: begin, end: end),
         duration: Duration(milliseconds: durationinmilliseconds),

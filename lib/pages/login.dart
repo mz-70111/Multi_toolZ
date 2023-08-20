@@ -29,7 +29,7 @@ class LogIn extends StatelessWidget {
     List loginelements() => [
           {
             'visible': true,
-            'label': Lang.lang['logineusernamelabel']
+            'label': Lang.lang['loginusernamelabel']
                 [Lang.langlist.indexOf(Lang.selectlanguage)],
             'controller': usernamecontroller,
             'icon': Icons.person,
@@ -38,33 +38,36 @@ class LogIn extends StatelessWidget {
           },
           {
             'visible': !chgpassvis,
-            'label': Lang.lang['loginepasswordlabel']
+            'label': Lang.lang['loginpasswordlabel']
                 [Lang.langlist.indexOf(Lang.selectlanguage)],
             'controller': passwordcontroller,
             'icon': iconvisible,
             'action': () => mainController.hideshowpasswordLogin(),
             'obscuretext': passwordvisible,
-            'error': loginerrormsg
+            'error': loginerrormsg,
+            'textdirection': TextDirection.ltr
           },
           {
             'visible': chgpassvis,
-            'label': Lang.lang['loginenewpasswordlabel']
+            'label': Lang.lang['loginnewpasswordlabel']
                 [Lang.langlist.indexOf(Lang.selectlanguage)],
             'controller': newpasswordcontroller,
             'icon': iconvisible,
             'action': () => mainController.hideshowpasswordLogin(),
             'obscuretext': passwordvisible,
-            'error': loginerrormsg
+            'error': loginerrormsg,
+            'textdirection': TextDirection.ltr
           },
           {
             'visible': chgpassvis,
-            'label': Lang.lang['loginenewpasswordconfirmlabel']
+            'label': Lang.lang['loginnewpasswordconfirmlabel']
                 [Lang.langlist.indexOf(Lang.selectlanguage)],
             'controller': newpasswordconfirmcontroller,
             'icon': iconvisible,
             'action': () => mainController.hideshowpasswordLogin(),
             'obscuretext': passwordvisible,
-            'error': loginerrormsg
+            'error': loginerrormsg,
+            'textdirection': TextDirection.ltr
           },
         ];
     return FutureBuilder(
@@ -138,7 +141,8 @@ class LogIn extends StatelessWidget {
                                     icon: e['icon'],
                                     obscureText: e['obscuretext'] ?? false,
                                     errormsg: e['error'],
-                                    textDirection: InfoBasic.textDirection(),
+                                    textDirection: e['textdirection'] ??
+                                        InfoBasic.textDirection(),
                                   ),
                                 )),
                             Row(
@@ -173,7 +177,7 @@ class LogIn extends StatelessWidget {
                                     visible: !loginwait,
                                     child: ElevatedButton.icon(
                                         onPressed: () async {
-                                          await mainController.chgpassaction();
+                                          await mainController.mustchgpass();
                                         },
                                         icon: const Icon(Icons.login),
                                         label: Text(

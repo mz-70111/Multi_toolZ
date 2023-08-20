@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:multi_tools_mz/controllers/main_controller.dart';
+import 'package:multi_tools_mz/pages/login.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/database.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/info_basic.dart';
 
@@ -25,10 +27,10 @@ class DBController extends GetxController {
   }
 
   getuserinfo({userid}) async {
-    Map result = {};
+    List result = [];
     List userMainInfo = await DBController().requestpost(
         url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-        data: {'customquery': "select * from users where username='$userid';"});
+        data: {'customquery': "select * from users where user_id='$userid';"});
     List userPrivilege = await DBController().requestpost(
         url: "${InfoBasic.host}${InfoBasic.customquerypath}",
         data: {
@@ -42,7 +44,7 @@ class DBController extends GetxController {
           'customquery':
               "select * from users_priv_office where upo_user_id=${userMainInfo[0]['user_id']};"
         });
-    result.addAll({});
+    result.add([]);
     result[0] = {
       'user_id': '${userMainInfo[0]['user_id']}',
       'username': '${userMainInfo[0]['username']}',
@@ -72,13 +74,15 @@ class DBController extends GetxController {
       }
       result[0]['office_priv'] = officepriv;
     }
-    print(result);
     return result;
   }
 
-  changpass({userid}) async {
-    List checkoldpass = await DBController().requestpost(
+  changpass({userid, password}) async {
+    await DBController().requestpost(
         url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-        data: {'customquery': "select * from users where user;"});
+        data: {
+          'customquery':
+              "update users set password='$password' where user_id=$userid;"
+        });
   }
 }

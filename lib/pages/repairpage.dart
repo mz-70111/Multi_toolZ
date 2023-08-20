@@ -14,7 +14,6 @@ class RepairPage extends StatelessWidget {
     MainController mainController = Get.find();
     DBController dbController = Get.find();
     List? version;
-    String currentversion = 'v_1.0.1';
     return GetBuilder<DBController>(
       init: dbController,
       builder: (_) => Scaffold(
@@ -45,55 +44,79 @@ class RepairPage extends StatelessWidget {
                   );
                 } else {
                   SplashScreen.waittime = 1;
-                  if (version![0]['version'] == currentversion) {
+                  if (version![0]['version'] == InfoBasic.version) {
                     return const LogIn();
                   } else {
                     return Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text('''يوجد تحديث جديد للتطبيق'''),
-                          InkWell(
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                      child: Directionality(
+                        textDirection: TextDirection.ltr,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            width: 300,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text("Android"),
-                                Icon(
-                                  Icons.android,
-                                  size: 35,
+                                const Text('''يوجد تحديث جديد للتطبيق'''),
+                                InkWell(
+                                  child: const Row(
+                                    children: [
+                                      Icon(
+                                        Icons.android,
+                                        size: 35,
+                                      ),
+                                      Text("Android"),
+                                    ],
+                                  ),
+                                  onTap: () async {
+                                    await mainController.urllaunch(
+                                        url: '${version![0]['android']}');
+                                  },
                                 ),
+                                InkWell(
+                                    child: const Row(
+                                      children: [
+                                        Icon(
+                                          Icons.window,
+                                          size: 35,
+                                        ),
+                                        Text('Windows'),
+                                      ],
+                                    ),
+                                    onTap: () async {
+                                      await mainController.urllaunch(
+                                          url: '${version![0]['windows']}');
+                                    }),
+                                InkWell(
+                                    child: const Row(
+                                      children: [
+                                        Icon(
+                                          Icons.web,
+                                          size: 35,
+                                        ),
+                                        Text('Web'),
+                                      ],
+                                    ),
+                                    onTap: () async {
+                                      await mainController.urllaunch(
+                                          url: '${version![0]['web']}');
+                                    }),
+                                Visibility(
+                                    visible: version![0]['skip'] == '1'
+                                        ? true
+                                        : false,
+                                    child: Card(
+                                      child: TextButton(
+                                          onPressed: () {
+                                            Get.offNamed('/login');
+                                          },
+                                          child: const Text("تخطي")),
+                                    ))
                               ],
                             ),
-                            onTap: () async {
-                              await mainController.urllaunch(
-                                  url: '${version![0]['android']}');
-                            },
                           ),
-                          InkWell(
-                              child: const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text('Windows'),
-                                  Icon(
-                                    Icons.window,
-                                    size: 35,
-                                  ),
-                                ],
-                              ),
-                              onTap: () async {
-                                await mainController.urllaunch(
-                                    url: '${version![0]['windows']}');
-                              }),
-                          Visibility(
-                              visible: version![0]['skip'] == 1 ? true : false,
-                              child: Card(
-                                child: TextButton(
-                                    onPressed: () {
-                                      Get.offNamed('/login');
-                                    },
-                                    child: const Text("تخطي")),
-                              ))
-                        ],
+                        ),
                       ),
                     );
                   }

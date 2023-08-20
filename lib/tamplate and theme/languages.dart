@@ -4,10 +4,10 @@ class Lang {
 
   static Map lang = {
     'logintitle': ['تسجيل الدخول', 'LogIn'],
-    'logineusernamelabel': ['اسم المستخدم', 'username'],
-    'loginepasswordlabel': ['كلمة المرور', 'Password'],
-    'loginenewpasswordlabel': ['كلمة المرور الجديدة', 'new Password'],
-    'loginenewpasswordconfirmlabel': [
+    'loginusernamelabel': ['اسم المستخدم', 'username'],
+    'loginpasswordlabel': ['كلمة المرور', 'Password'],
+    'loginnewpasswordlabel': ['كلمة المرور الجديدة', 'new Password'],
+    'loginnewpasswordconfirmlabel': [
       'تأكيد كلمة المرور الجديدة',
       'new Password -Confirm'
     ],
@@ -46,5 +46,14 @@ class Lang {
     'pbx': ['المقسم', 'PBX'],
     'hlinks': ['روابط خارجية', 'Links'],
     'changpasstitle': ['تغيير كلمة المرور', 'change password'],
+    'wrongpass': ['كلمة مرور غير صحيحة', 'Wrong Password'],
+    'mobile': ['موبايل', 'mobile'],
+    'fullname': ['الاسم الكامل', 'fullname'],
+    'username': ['اسم المستخدم', 'username'],
+    'email': ['البريد الالكتروني', 'email'],
+    'personalinfo': ['معلومات شخصية', 'Personal Info'],
+    'basicinfo': ['معلومات أساسية', 'basic Info'],
+    'basicpriv': ['الصلاحيات الأساسية', 'basic Privileges'],
+    'officepriv': ['الصلاحيات ضمن المكتب', 'Privileges at Office']
   };
 }

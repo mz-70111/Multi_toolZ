@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:multi_tools_mz/controllers/db_controller.dart';
 import 'package:multi_tools_mz/controllers/main_controller.dart';
 import 'package:multi_tools_mz/controllers/theme_controller.dart';
 import 'package:multi_tools_mz/pages/login.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/bottomnavbar.dart';
-import 'package:multi_tools_mz/tamplate%20and%20theme/database.dart';
+import 'package:multi_tools_mz/tamplate%20and%20theme/dialogmz.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/info_basic.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/languages.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/shared_pre_mz.dart';
@@ -19,18 +18,17 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     MainController mainController = Get.find();
     ThemeController themeController = Get.find();
-    DBController dbController = Get.find();
     List draweritems() => [
           {
             'title':
                 "${Lang.lang['drawerpersonalinfo'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
-            'action': () {},
+            'action': () => DialogMz.chgpassshowpersonalDialog(ctx: context),
             'icon': Icons.person,
           },
           {
             'title':
                 "${Lang.lang['drawerpesonalchgpass'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
-            'action': () => mainController.chgpassfrompresonal(ctx: context),
+            'action': () => DialogMz.chgpassfrompresonalDialog(ctx: context),
             'icon': Icons.password
           },
           {
@@ -104,10 +102,7 @@ class HomePage extends StatelessWidget {
           }
         ];
     return FutureBuilder(future: Future(() async {
-      LogIn.userinfo = SharedPreMz.sharedPreMzGetLogin();
       ThemeMz.mode = SharedPreMz.sharedPreMzGetMode() ?? 'light';
-      DB.userinfotable =
-          await dbController.getuserinfo(userid: LogIn.userinfo![2]);
     }), builder: (_, snap) {
       if (LogIn.userinfo != null) {
         return GetBuilder<ThemeController>(

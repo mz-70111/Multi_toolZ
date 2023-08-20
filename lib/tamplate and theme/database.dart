@@ -6,7 +6,7 @@ import 'package:multi_tools_mz/tamplate%20and%20theme/info_basic.dart';
 class DB {
   MainController mainController = Get.find();
 
-  static Map userinfotable = {};
+  static List userinfotable = [];
   createtables() async {
     //create version table
     await DBController().requestpost(
@@ -92,7 +92,7 @@ up_user_id int(11),
 foreign key (up_user_id) references users(user_id),
 admin tinyint(1) default 0,
 enable tinyint(1) default 1,
-mustchgpass tinyint(1) default 0,
+mustchgpass tinyint(1) default 1,
 pbx tinyint(1) default 0
 );
 '''

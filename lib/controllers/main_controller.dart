@@ -9,6 +9,8 @@ import 'package:multi_tools_mz/controllers/db_controller.dart';
 import 'package:multi_tools_mz/pages/login.dart';
 import 'package:multi_tools_mz/pages/splash_screen.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/bottomnavbar.dart';
+import 'package:multi_tools_mz/tamplate%20and%20theme/database.dart';
+import 'package:multi_tools_mz/tamplate%20and%20theme/dialogmz.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/info_basic.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/languages.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/shared_pre_mz.dart';
@@ -109,6 +111,8 @@ class MainController extends GetxController {
                 userinfo[0]['user_id']
               ]);
               LogIn.userinfo = SharedPreMz.sharedPreMzGetLogin();
+              DB.userinfotable =
+                  await DBController().getuserinfo(userid: LogIn.userinfo![2]);
               Get.offNamed('/home');
             } else {
               LogIn.chgpassvis = true;
@@ -152,12 +156,9 @@ class MainController extends GetxController {
               });
           if (accountstatus![0]['enable'] == '1') {
             if (accountstatus[0]['mustchgpass'] == '0') {
-              await SharedPreMz.sharedPreMzSetLogin(login: [
-                userinfo[0]['username'],
-                LogIn.passwordcontroller.text,
-                userinfo[0]['user_id']
-              ]);
               LogIn.userinfo = SharedPreMz.sharedPreMzGetLogin();
+              DB.userinfotable =
+                  await DBController().getuserinfo(userid: LogIn.userinfo![2]);
               Get.offNamed('/home');
             } else {
               LogIn.chgpassvis = true;
@@ -180,7 +181,7 @@ class MainController extends GetxController {
     update();
   }
 
-  chgpassaction() async {
+  mustchgpass() async {
     LogIn.mainloginerrormsg = LogIn.loginerrormsg = null;
     if (LogIn.newpasswordcontroller.text.isEmpty) {
       LogIn.loginerrormsg =
@@ -192,34 +193,32 @@ class MainController extends GetxController {
     } else {
       LogIn.loginwait = true;
       try {
-        List? userinfo = await DBController().requestpost(
+        List userinfo = await DBController().requestpost(
             url: "${InfoBasic.host}${InfoBasic.customquerypath}",
             data: {
               'customquery':
-                  "select * from users where username='${LogIn.usernamecontroller.text.toLowerCase()}' and password='${codepassword(word: LogIn.passwordcontroller.text)}';"
+                  "select * from users where username='${LogIn.usernamecontroller.text.toLowerCase()}';"
             });
-        await DBController().requestpost(
-            url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-            data: {
-              'customquery':
-                  "update users set password='${codepassword(word: LogIn.newpasswordcontroller.text)}' where username='${LogIn.usernamecontroller.text.toLowerCase()}';"
-            });
-        await DBController().requestpost(
-            url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-            data: {
-              'customquery':
-                  "update users_privileges set mustchgpass=0 where up_user_id=${userinfo![0]['user_id']};"
-            });
-        await SharedPreMz.sharedPreMzSetLogin(
-          login: [
-            userinfo[0]['username'],
-            LogIn.newpasswordcontroller.text,
-            userinfo[0]['user_id']
-          ],
-        );
-        LogIn.loginwait = false;
+        await DBController().changpass(
+            userid: userinfo[0]['user_id'],
+            password: codepassword(word: LogIn.newpasswordcontroller.text));
+        await SharedPreMz.sharedPreMzSetLogin(login: [
+          userinfo[0]['username'],
+          LogIn.newpasswordcontroller.text,
+          userinfo[0]['user_id']
+        ]);
         LogIn.userinfo = SharedPreMz.sharedPreMzGetLogin();
+        DB.userinfotable =
+            await DBController().getuserinfo(userid: LogIn.userinfo![2]);
+        await DBController().requestpost(
+            url: "${InfoBasic.host}${InfoBasic.customquerypath}",
+            data: {
+              'customquery':
+                  "update users_privileges set mustchgpass=0 where up_user_id=${userinfo[0]['user_id']};"
+            });
+
         Get.offNamed('/home');
+        LogIn.loginwait = false;
       } catch (e) {
         LogIn.mainloginerrormsg =
             "${Lang.lang['mainloginerrormsg'][Lang.langlist.indexOf(Lang.selectlanguage)]}";
@@ -232,24 +231,10 @@ class MainController extends GetxController {
   logout() async {
     await SharedPreMz.sharedPreferenceMM.remove('login');
     LogIn.usernamecontroller.text = LogIn.passwordcontroller.text = '';
+    LogIn.newpasswordconfirmcontroller.text =
+        LogIn.newpasswordcontroller.text = '';
+    LogIn.chgpassvis = false;
     Get.offNamed('/login');
-  }
-
-  chgpassfrompresonal({ctx}) async {
-    showDialog(
-        context: ctx,
-        builder: (_) {
-          return Directionality(
-            textDirection: Lang.selectlanguage == 'Ar'
-                ? TextDirection.rtl
-                : TextDirection.ltr,
-            child: AlertDialog(
-              title: Text(Lang.lang['changpasstitle']
-                  [Lang.langlist.indexOf(Lang.selectlanguage)]),
-            ),
-          );
-        });
-    update();
   }
 
   navbaraction({x}) async {
@@ -270,4 +255,61 @@ class MainController extends GetxController {
   }
 
   showpersonalinfo({ctx}) {}
+  checkpassword({password}) {
+    if (DB.userinfotable[0]['password'] == password) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  checkpasswordforpersonal({password}) {
+    DialogMz.errormsg = null;
+    bool check = checkpassword(password: codepassword(word: password));
+    check == true
+        ? {
+            DialogMz.textfieldvisible = false,
+            DialogMz.action2visible = true,
+          }
+        : DialogMz.errormsg =
+            Lang.lang['wrongpass'][Lang.langlist.indexOf(Lang.selectlanguage)];
+    update();
+  }
+
+  changepasswordpersonal(
+      {required String newpass, required String newpassconfirm}) async {
+    DialogMz.errormsg = null;
+    if (newpass.isEmpty) {
+      DialogMz.errormsg =
+          "${Lang.lang['checkemptynewpass'][Lang.langlist.indexOf(Lang.selectlanguage)]}";
+    } else if (newpass != newpassconfirm) {
+      DialogMz.errormsg =
+          "${Lang.lang['passwordnotmatch'][Lang.langlist.indexOf(Lang.selectlanguage)]}";
+    } else {
+      DialogMz.wait = true;
+      try {
+        await DBController().changpass(
+            userid: DB.userinfotable[0]['user_id'],
+            password: codepassword(word: newpass));
+        DialogMz.wait = false;
+        Get.back();
+        logout();
+      } catch (e) {
+        DialogMz.errormsg =
+            "${Lang.lang['mainloginerrormsg'][Lang.langlist.indexOf(Lang.selectlanguage)]}";
+      }
+    }
+    update();
+  }
+
+  hideshowpasswordchgpass() {
+    DialogMz.obscureText = DialogMz.obscureText == true ? false : true;
+    update();
+  }
+
+  chooseselectedinfo({selected}) {
+    DialogMz.selected = false;
+    selected = true;
+    update();
+  }
 }

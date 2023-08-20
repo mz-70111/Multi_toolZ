@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:multi_tools_mz/controllers/chat_controller.dart';
 import 'package:multi_tools_mz/controllers/main_controller.dart';
 import 'package:multi_tools_mz/controllers/theme_controller.dart';
+import 'package:multi_tools_mz/pages/login.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/database.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/theme_Mz.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/tween_mz.dart';
@@ -115,7 +116,7 @@ class BottomNavBarMz extends StatelessWidget {
         stream: Stream.periodic(
             const Duration(seconds: 2),
             (a) async => notifinum = await chatController.getchatnotifi(
-                reciverid: DB.userinfotable[0]['user_id'])),
+                reciverid: LogIn.userinfo![2])),
         builder: (_, snap) {
           if (snap.hasData && e['notifi'] != null && notifinum > 0) {
             return Transform.translate(
