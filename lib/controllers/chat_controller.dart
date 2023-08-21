@@ -4,12 +4,17 @@ import 'package:multi_tools_mz/tamplate%20and%20theme/info_basic.dart';
 
 class ChatController extends GetxController {
   getchatnotifi({reciverid}) async {
-    var notifi = await DBController().requestpost(
-        url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-        data: {
-          'customquery':
-              "select * from chat where reciever_id=$reciverid and readstatus=0;"
-        });
+    List? notifi;
+    try {
+      notifi = await DBController().requestpost(
+          url: "${InfoBasic.host}${InfoBasic.customquerypath}",
+          data: {
+            'customquery':
+                "select * from chat where reciever_id=$reciverid and readstatus=0;"
+          });
+    } catch (e) {
+      return null;
+    }
     if (notifi != null) {
       return notifi.length;
     } else {

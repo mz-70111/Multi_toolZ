@@ -49,11 +49,26 @@ class Lang {
     'wrongpass': ['كلمة مرور غير صحيحة', 'Wrong Password'],
     'mobile': ['موبايل', 'mobile'],
     'fullname': ['الاسم الكامل', 'fullname'],
+    'id': ['المعرف الخاص', 'Id'],
     'username': ['اسم المستخدم', 'username'],
     'email': ['البريد الالكتروني', 'email'],
     'personalinfo': ['معلومات شخصية', 'Personal Info'],
     'basicinfo': ['معلومات أساسية', 'basic Info'],
     'basicpriv': ['الصلاحيات الأساسية', 'basic Privileges'],
-    'officepriv': ['الصلاحيات ضمن المكتب', 'Privileges at Office']
+    'officepriv': ['الصلاحيات ضمن المكتب', 'Privileges at Office'],
+    'admin': ['مسؤول', 'admin'],
+    'enable1': ['حساب فعال', 'account is enable'],
+    'enable0': ['حساب معطل', 'account is disable'],
+    'mustchgpass': ['يجب تغيير كلمة المرور', 'must change password'],
+    'pbxaccess': ['وصول لتسجيلات المقسم', 'access to PBX records'],
+    'addtask': ['إضافة مهمة', 'add task'],
+    'addremind': ['إضافة تذكير', 'add remind'],
+    'addtodo': ['إضافة إجرائية', 'add todo'],
+    'addemailtest': ['إضافة تفحص إيميل', 'add email check'],
+    'fullnamecheckempty': [
+      'لا يمكن ان يكون الاسم فارغا',
+      'full name can\'t be empty!!'
+    ],
+    'logpagetitle': ['سجل الحركات', 'Logs record'],
   };
 }

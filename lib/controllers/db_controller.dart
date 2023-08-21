@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -19,10 +20,10 @@ class DBController extends GetxController {
     List? result;
     try {
       var resp = await http.post(Uri.parse(url), body: data);
-      result = json.decode(resp.body);
-    } catch (e) {
-      null;
-    }
+      if (resp.statusCode == 200) {
+        result = json.decode(resp.body);
+      }
+    } catch (e) {}
     return result;
   }
 
@@ -84,5 +85,22 @@ class DBController extends GetxController {
           'customquery':
               "update users set password='$password' where user_id=$userid;"
         });
+  }
+
+  getlogsinfo() async {
+    List result = [];
+    List logs = await DBController().requestpost(
+        url: "${InfoBasic.host}${InfoBasic.customquerypath}",
+        data: {'customquery': "select * from logs;"});
+    for (var i in logs) {
+      result.add([]);
+      result[logs.indexOf(i)] = {
+        'log_id': '${i['log_id']}',
+        'log': '${i['log']}',
+        'logdate': '${i['logdate']}',
+      };
+    }
+
+    return result;
   }
 }

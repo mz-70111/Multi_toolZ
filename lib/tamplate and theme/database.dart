@@ -7,6 +7,8 @@ class DB {
   MainController mainController = Get.find();
 
   static List userinfotable = [];
+  static List logstable = [];
+
   createtables() async {
     //create version table
     await DBController().requestpost(

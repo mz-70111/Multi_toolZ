@@ -4,6 +4,7 @@ import 'package:multi_tools_mz/controllers/main_controller.dart';
 import 'package:multi_tools_mz/controllers/theme_controller.dart';
 import 'package:multi_tools_mz/pages/login.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/bottomnavbar.dart';
+import 'package:multi_tools_mz/tamplate%20and%20theme/database.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/dialogmz.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/info_basic.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/languages.dart';
@@ -47,48 +48,61 @@ class HomePage extends StatelessWidget {
         ];
     List maindepartments() => [
           {
+            'visible': DB.userinfotable[0]['admin'] == '1' ? true : false,
             'title':
                 "${Lang.lang['offices'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.work,
             'action': () {},
           },
           {
+            'visible': DB.userinfotable[0]['admin'] == '1' ? true : false,
             'title':
                 "${Lang.lang['accounts'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.people,
             'action': () {},
           },
           {
+            'visible':
+                DB.userinfotable[0]['office_priv'].isNotEmpty ? true : false,
             'title':
                 "${Lang.lang['tasks'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.task,
             'action': () {},
           },
           {
+            'visible':
+                DB.userinfotable[0]['office_priv'].isNotEmpty ? true : false,
             'title':
                 "${Lang.lang['todo'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.question_mark,
             'action': () {},
           },
           {
+            'visible':
+                DB.userinfotable[0]['office_priv'].isNotEmpty ? true : false,
             'title':
                 "${Lang.lang['remind'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.alarm,
             'action': () {},
           },
           {
+            'visible':
+                DB.userinfotable[0]['office_priv'].isNotEmpty ? true : false,
             'title':
                 "${Lang.lang['ping'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.wifi,
             'action': () {},
           },
           {
+            'visible':
+                DB.userinfotable[0]['office_priv'].isNotEmpty ? true : false,
             'title':
                 "${Lang.lang['checkemails'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.attach_email,
             'action': () {},
           },
           {
+            'visible': DB.userinfotable[0]['pbx'] == '1' ? true : false,
             'title':
                 "${Lang.lang['pbx'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.phone,

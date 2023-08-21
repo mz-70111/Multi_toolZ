@@ -17,7 +17,6 @@ class ThemeMz {
           onSurface: Colors.amber),
       appBarTheme: const AppBarTheme(backgroundColor: Colors.black12),
       iconTheme: const IconThemeData(color: Colors.yellowAccent),
-      cardTheme: CardTheme(color: Colors.amberAccent.withOpacity(0.2)),
       elevatedButtonTheme: const ElevatedButtonThemeData(
           style: ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(Colors.black26))),
@@ -26,6 +25,8 @@ class ThemeMz {
               fontFamily: "Marhey", fontSize: 17, color: Colors.white60),
           titleMedium: TextStyle(
               fontFamily: "Marhey", fontSize: 15, color: Colors.white60),
+          titleSmall: TextStyle(
+              fontFamily: "Marhey", fontSize: 10, color: Colors.white60),
           labelMedium: TextStyle(
               fontFamily: "Marhey", fontSize: 20, color: Colors.yellowAccent),
           labelSmall: TextStyle(
@@ -44,7 +45,6 @@ class ThemeMz {
           onBackground: Colors.tealAccent,
           surface: Colors.orangeAccent,
           onSurface: Colors.indigoAccent),
-      cardTheme: CardTheme(color: Colors.indigoAccent.withOpacity(0.2)),
       appBarTheme: const AppBarTheme(backgroundColor: Colors.white70),
       iconTheme: const IconThemeData(color: Colors.deepPurple),
       elevatedButtonTheme: const ElevatedButtonThemeData(
@@ -55,6 +55,8 @@ class ThemeMz {
               fontFamily: "Marhey", fontSize: 17, color: Colors.black),
           titleMedium: TextStyle(
               fontFamily: "Marhey", fontSize: 15, color: Colors.black),
+          titleSmall: TextStyle(
+              fontFamily: "Marhey", fontSize: 10, color: Colors.black),
           labelMedium: TextStyle(
               fontFamily: "Marhey", fontSize: 20, color: Colors.indigo),
           labelSmall: TextStyle(

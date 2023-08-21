@@ -14,48 +14,45 @@ ThemeController themeController = Get.find();
 class BottomNavBarMz extends StatelessWidget {
   const BottomNavBarMz({super.key});
   static int selecteditem = 0;
-  static int notifinum = 0;
-  static List bottomnavitem = [
-    {
-      'visible': true,
-      'angle': 45.0,
-      'y': -AppBar().preferredSize.height / 3,
-      'icon': Icons.home,
-      'backcolor': ThemeMz.mode == 'light' ? Colors.white : Colors.black,
-      'bordercolor':
-          ThemeMz.mode == 'light' ? Colors.deepPurple : Colors.amberAccent,
-      'action': () => mainController.navbaraction(x: 0),
-      'x': 0,
-      'size': 1,
-    },
-    {
-      'visible': true,
-      'angle': 0.0,
-      'y': 0.0,
-      'icon': Icons.chat,
-      'backcolor': ThemeMz.mode == 'light' ? Colors.white54 : Colors.black54,
-      'bordercolor': Colors.transparent,
-      'action': () async => await mainController.navbaraction(x: 1),
-      'x': 1,
-      'size': 1,
-      'notifi': 'ok'
-    },
-    {
-      'visible': false,
-      'angle': 0.0,
-      'y': 0.0,
-      'icon': Icons.report,
-      'backcolor': ThemeMz.mode == 'light' ? Colors.white54 : Colors.black54,
-      'bordercolor': Colors.transparent,
-      'action': () => mainController.navbaraction(x: 2),
-      'x': 2,
-      'size': 1,
-    }
-  ];
+  static int? notifinum;
+  static List selectedlist = [];
   @override
   Widget build(BuildContext context) {
+    List bottomnavitem() => [
+          {
+            'visible': true,
+            'icon': Icons.home,
+            'action': () => mainController.navbaraction(x: 0),
+            'index': 0,
+            'size': 1,
+          },
+          {
+            'visible': true,
+            'icon': Icons.chat,
+            'action': () async => await mainController.navbaraction(x: 1),
+            'index': 1,
+            'size': 1,
+            'notifi': 'ok'
+          },
+          {
+            'visible': DB.userinfotable[0]['admin'] == '1' ? true : false,
+            'icon': Icons.report,
+            'action': () => mainController.navbaraction(x: 2),
+            'index': 2,
+            'size': 1,
+          }
+        ];
+    if (selectedlist.isEmpty) {
+      selectedlist.clear();
+      for (var i = 0; i < bottomnavitem().length; i++) {
+        if (i == 0) {
+          selectedlist.add(true);
+        } else {
+          selectedlist.add(false);
+        }
+      }
+    }
     ChatController chatController = Get.find();
-    notifinum = 0;
     return Container(
         decoration: BoxDecoration(
           color: ThemeMz.mode == 'light' ? Colors.white54 : Colors.black54,
@@ -71,29 +68,49 @@ class BottomNavBarMz extends StatelessWidget {
               return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ...bottomnavitem.where((e) => e['visible'] == true).map(
+                    ...bottomnavitem().where((e) => e['visible'] == true).map(
                         (e) => TweenMz.rotate(
                             durationinmilliseconds: 300,
-                            end: e['angle'],
+                            end: selectedlist[e['index']] == true ? 45.0 : 0.0,
                             child: TweenMz.translatey(
-                                end: e['y'],
+                                end: selectedlist[e['index']] == true
+                                    ? -AppBar().preferredSize.height / 3
+                                    : 0.0,
                                 child: Container(
                                     decoration: BoxDecoration(
                                         boxShadow: [
                                           BoxShadow(
-                                              color: e['bordercolor'],
+                                              color: selectedlist[e['index']] ==
+                                                      true
+                                                  ? ThemeMz.mode == 'light'
+                                                      ? Colors.deepPurple
+                                                      : Colors.amberAccent
+                                                  : Colors.transparent,
                                               offset: const Offset(2, 2))
                                         ],
-                                        color: e['backcolor'],
+                                        color: selectedlist[e['index']] == true
+                                            ? ThemeMz.mode == 'light'
+                                                ? Colors.white
+                                                : Colors.black
+                                            : Colors.transparent,
                                         border: Border.all(
-                                            width: 2, color: e['bordercolor']),
+                                          width: 2,
+                                          color:
+                                              selectedlist[e['index']] == true
+                                                  ? ThemeMz.mode == 'light'
+                                                      ? Colors.deepPurple
+                                                      : Colors.amberAccent
+                                                  : Colors.transparent,
+                                        ),
                                         borderRadius: const BorderRadius.all(
                                             Radius.elliptical(10, 5))),
                                     height: 50,
                                     width: 50,
                                     child: TweenMz.rotate(
                                         durationinmilliseconds: 300,
-                                        end: -e['angle'],
+                                        end: selectedlist[e['index']] == true
+                                            ? -45.0
+                                            : 0.0,
                                         child: IconButton(
                                           icon: Stack(children: [
                                             Icon(
@@ -118,13 +135,13 @@ class BottomNavBarMz extends StatelessWidget {
             (a) async => notifinum = await chatController.getchatnotifi(
                 reciverid: LogIn.userinfo![2])),
         builder: (_, snap) {
-          if (snap.hasData && e['notifi'] != null && notifinum > 0) {
+          if (snap.hasData && e['notifi'] != null && notifinum != null) {
             return Transform.translate(
                 offset: const Offset(-20.0, -20.0),
                 child: CircleAvatar(
                     radius: 10,
                     backgroundColor: Colors.red,
-                    child: Text(notifinum > 0 ? "$notifinum" : "",
+                    child: Text(notifinum! > 0 ? "$notifinum" : "",
                         style: const TextStyle(
                             fontSize: 10, color: Colors.white))));
           } else {

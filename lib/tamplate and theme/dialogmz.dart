@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:multi_tools_mz/controllers/main_controller.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/bottomnavbar.dart';
+import 'package:multi_tools_mz/tamplate%20and%20theme/database.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/info_basic.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/languages.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/textfield_mz.dart';
@@ -11,7 +12,7 @@ class DialogMz {
   static bool wait = false, textfieldvisible = true, action2visible = false;
   static String? errormsg;
   static bool obscureText = true;
-  static bool selected = true;
+  static List selectedlist = [];
   static chgpassfrompresonalDialog({ctx}) {
     textfieldvisible = true;
     wait = action2visible = false;
@@ -126,26 +127,32 @@ class DialogMz {
   }
 
   static chgpassshowpersonalDialog({ctx}) {
-    TextEditingController fullname = TextEditingController();
-    TextEditingController mobile = TextEditingController();
-    TextEditingController email = TextEditingController();
+    TextEditingController fullname = TextEditingController(
+        text: DB.userinfotable[0]['fullname'] == 'null'
+            ? ''
+            : DB.userinfotable[0]['fullname']);
+    TextEditingController mobile = TextEditingController(
+        text: DB.userinfotable[0]['mobile'] == 'null'
+            ? ''
+            : DB.userinfotable[0]['mobile']);
+    TextEditingController email = TextEditingController(
+        text: DB.userinfotable[0]['email'] == 'null'
+            ? ''
+            : DB.userinfotable[0]['email']);
     List textfieldmz() => [
           {
-            'visible': !DialogMz.textfieldvisible,
             'controller': fullname,
             'icon': Icons.person,
             'label': Lang.lang['fullname']
                 [Lang.langlist.indexOf(Lang.selectlanguage)],
           },
           {
-            'visible': !DialogMz.textfieldvisible,
             'controller': mobile,
             'icon': Icons.phone,
             'label': Lang.lang['mobile']
                 [Lang.langlist.indexOf(Lang.selectlanguage)],
           },
           {
-            'visible': !DialogMz.textfieldvisible,
             'controller': email,
             'icon': Icons.email,
             'label': Lang.lang['email']
@@ -154,16 +161,24 @@ class DialogMz {
         ];
     List actionrow() => [
           {
-            'widget':
-                ElevatedButton(onPressed: () {}, child: const Icon(Icons.save)),
+            'widget': ElevatedButton(
+                onPressed: () async {
+                  await mainController.updatepesonalinfo(
+                      fullname: fullname.text,
+                      mobile: mobile.text,
+                      email: email.text);
+                },
+                child: const Icon(Icons.save)),
             'visible': !wait,
-            'visible2': !action2visible
           },
           {
             'widget': ElevatedButton(
-                onPressed: () => Get.back(), child: const Icon(Icons.cancel)),
+                onPressed: () {
+                  Get.back();
+                  wait = false;
+                },
+                child: const Icon(Icons.cancel)),
             'visible': true,
-            'visible2': !action2visible
           },
           {
             'widget': const SizedBox(
@@ -171,73 +186,236 @@ class DialogMz {
               child: LinearProgressIndicator(),
             ),
             'visible': wait,
-            'visible2': wait
           }
         ];
-    List maindept(x) => [
+    List maindept() => [
           {
             'label': Lang.lang['basicinfo']
                 [Lang.langlist.indexOf(Lang.selectlanguage)],
-            'action': () => mainController.chooseselectedinfo(selected: x),
-            'selected': x,
-            'index': 0
+            'action': () => mainController.chooseselectedinfo(0),
+            'index': 0,
+            'icon': Icons.info
           },
           {
             'label': Lang.lang['basicpriv']
                 [Lang.langlist.indexOf(Lang.selectlanguage)],
-            'action': () => mainController.chooseselectedinfo(selected: x),
-            'selected': x,
-            'index': 1
+            'action': () => mainController.chooseselectedinfo(1),
+            'index': 1,
+            'icon': Icons.accessibility_new
           },
           {
             'label': Lang.lang['officepriv']
                 [Lang.langlist.indexOf(Lang.selectlanguage)],
-            'action': () => mainController.chooseselectedinfo(selected: x),
-            'selected': x,
-            'index': 2
+            'action': () => mainController.chooseselectedinfo(2),
+            'index': 2,
+            'icon': Icons.work
           },
         ];
+    List basicpriv = [
+      DB.userinfotable[0]['mustchgpass'] == '1'
+          ? Lang.lang['mustchgpass'][Lang.langlist.indexOf(Lang.selectlanguage)]
+          : 0,
+      DB.userinfotable[0]['enable'] == '1'
+          ? Lang.lang['enable1'][Lang.langlist.indexOf(Lang.selectlanguage)]
+          : 0,
+      DB.userinfotable[0]['admin'] == '1'
+          ? Lang.lang['admin'][Lang.langlist.indexOf(Lang.selectlanguage)]
+          : 0,
+      DB.userinfotable[0]['pbx'] == '1'
+          ? Lang.lang['pbxaccess'][Lang.langlist.indexOf(Lang.selectlanguage)]
+          : 0,
+    ];
+    List privatoffice(item) => [
+          item['addtodo'] == '1'
+              ? Lang.lang['addtodo'][Lang.langlist.indexOf(Lang.selectlanguage)]
+              : 0,
+          item['addremind'] == '1'
+              ? Lang.lang['addremind']
+                  [Lang.langlist.indexOf(Lang.selectlanguage)]
+              : 0,
+          item['addtask'] == '1'
+              ? Lang.lang['addtask'][Lang.langlist.indexOf(Lang.selectlanguage)]
+              : 0,
+          item['addemailtest'] == '1'
+              ? Lang.lang['addemailtest']
+                  [Lang.langlist.indexOf(Lang.selectlanguage)]
+              : 0,
+        ];
+    errormsg = null;
+
     return showDialog(
         context: ctx,
         builder: (_) {
+          selectedlist.clear();
+          for (var i = 0; i < maindept().length; i++) {
+            if (i == 0) {
+              selectedlist.add(true);
+            } else {
+              selectedlist.add(false);
+            }
+          }
           return Directionality(
               textDirection: InfoBasic.textDirection(),
               child: GetBuilder<MainController>(
                   init: mainController,
-                  builder: (_) => AlertDialog(
-                      scrollable: true,
-                      title: Text(
-                        Lang.lang['personalinfo']
-                            [Lang.langlist.indexOf(Lang.selectlanguage)],
-                      ),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  builder: (_) {
+                    return SizedBox(
+                      width: MediaQuery.of(ctx).size.width > 500
+                          ? 500
+                          : MediaQuery.of(ctx).size.width,
+                      child: AlertDialog(
+                        scrollable: true,
+                        title: Text(
+                          Lang.lang['personalinfo']
+                              [Lang.langlist.indexOf(Lang.selectlanguage)],
+                        ),
+                        content: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              ...maindept(selected).map((e) => TextButton(
-                                  onPressed: e['action'],
-                                  child: TweenMz.scale(
-                                    durationinmilliseconds: 300,
-                                    end: e['selected'] == true ? 1.2 : 1,
-                                    child: Card(
-                                      elevation: e['selected'] == true ? 20 : 0,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          e['label'],
-                                          style: Theme.of(ctx)
-                                              .textTheme
-                                              .titleMedium,
-                                        ),
-                                      ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Row(children: [
+                                      ...maindept()
+                                          .where((element) =>
+                                              selectedlist[element['index']] ==
+                                              true)
+                                          .map((e) {
+                                        return Expanded(
+                                          child: Card(
+                                            elevation: 10,
+                                            shadowColor:
+                                                selectedlist[e['index']] == true
+                                                    ? Colors.deepOrangeAccent
+                                                    : Colors.grey
+                                                        .withOpacity(0.1),
+                                            child: TextButton.icon(
+                                                icon: Icon(e['icon']),
+                                                onPressed: e['action'],
+                                                label: TweenMz.scale(
+                                                  end: selectedlist[
+                                                              e['index']] ==
+                                                          true
+                                                      ? 1.2
+                                                      : 0.8,
+                                                  child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child:
+                                                          SingleChildScrollView(
+                                                        scrollDirection:
+                                                            Axis.horizontal,
+                                                        child: Text(
+                                                          e['label'],
+                                                          style: Theme.of(ctx)
+                                                              .textTheme
+                                                              .titleSmall,
+                                                          overflow:
+                                                              TextOverflow.fade,
+                                                        ),
+                                                      )),
+                                                )),
+                                          ),
+                                        );
+                                      })
+                                    ]),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      children: [
+                                        ...maindept()
+                                            .where((element) =>
+                                                selectedlist[
+                                                    element['index']] !=
+                                                true)
+                                            .map((e) {
+                                          return Container(
+                                            decoration: BoxDecoration(
+                                                border: Border.all()),
+                                            child: IconButton(
+                                                onPressed: e['action'],
+                                                icon: Icon(e['icon'])),
+                                          );
+                                        })
+                                      ],
                                     ),
-                                  )))
-                            ],
-                          )
+                                  )
+                                ],
+                              ),
+                              Divider(),
+                              Visibility(
+                                  visible: selectedlist[0],
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "${Lang.lang['id'][Lang.langlist.indexOf(Lang.selectlanguage)]}: ${DB.userinfotable[0]['user_id']} ",
+                                      ),
+                                      Text(
+                                          "${Lang.lang['username'][Lang.langlist.indexOf(Lang.selectlanguage)]}: ${DB.userinfotable[0]['username']}"),
+                                      ...textfieldmz().map((e) => TextFieldMZ(
+                                            label: e['label'],
+                                            onchange: (x) => null,
+                                            action: () => null,
+                                            ontap: () => null,
+                                            controller: e['controller'],
+                                            icon: e['icon'],
+                                          ))
+                                    ],
+                                  )),
+                              Visibility(
+                                  visible: selectedlist[1],
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      ...basicpriv
+                                          .where((element) => element != 0)
+                                          .map((e) => Text("* $e"))
+                                    ],
+                                  )),
+                              Visibility(
+                                  visible: selectedlist[2],
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      ...DB.userinfotable[0]['office_priv']
+                                          .map((e) {
+                                        return Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text("${e['office_id']}"),
+                                              const Divider(),
+                                              Text("${e['position']}"),
+                                              ...privatoffice(e)
+                                                  .where(
+                                                      (element) => element != 0)
+                                                  .map((e) => Text("* $e")),
+                                              Divider()
+                                            ]);
+                                      })
+                                    ],
+                                  )),
+                              Visibility(
+                                  visible: errormsg == null ? false : true,
+                                  child: Text("$errormsg")),
+                            ]),
+                        actions: [
+                          ...actionrow()
+                              .where((e) => e['visible'] == true)
+                              .map((e) => e['widget'])
                         ],
-                      ))));
+                      ),
+                    );
+                  }));
         });
   }
 }

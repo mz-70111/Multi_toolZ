@@ -44,14 +44,6 @@ class ThemeController extends GetxController {
     ThemeMz.mode = SharedPreMz.sharedPreMzGetMode();
     HomePage.modeicon =
         HomePage.modeicon == Icons.sunny ? Icons.dark_mode : Icons.sunny;
-    for (var i in BottomNavBarMz.bottomnavitem) {
-      i['backcolor'] = Colors.transparent;
-      i['bordercolor'] = Colors.transparent;
-    }
-    BottomNavBarMz.bottomnavitem[BottomNavBarMz.selecteditem]['backcolor'] =
-        ThemeMz.mode == 'light' ? Colors.white : Colors.black;
-    BottomNavBarMz.bottomnavitem[BottomNavBarMz.selecteditem]['bordercolor'] =
-        ThemeMz.mode == 'light' ? Colors.deepPurple : Colors.amberAccent;
 
     update();
   }

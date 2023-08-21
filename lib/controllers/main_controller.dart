@@ -88,8 +88,9 @@ class MainController extends GetxController {
       LogIn.loginerrormsg =
           "${Lang.lang['loginerrormsg'][Lang.langlist.indexOf(Lang.selectlanguage)]}";
     } else {
+      LogIn.loginwait = true;
+      update();
       try {
-        LogIn.loginwait = true;
         List? userinfo = await DBController().requestpost(
             url: "${InfoBasic.host}${InfoBasic.customquerypath}",
             data: {
@@ -125,7 +126,6 @@ class MainController extends GetxController {
           LogIn.mainloginerrormsg =
               "${Lang.lang['mainloginerrormsgfaillogin'][Lang.langlist.indexOf(Lang.selectlanguage)]}";
         }
-        LogIn.loginwait = false;
       } catch (e) {
         LogIn.mainloginerrormsg =
             "${Lang.lang['mainloginerrormsg'][Lang.langlist.indexOf(Lang.selectlanguage)]}";
@@ -139,8 +139,9 @@ class MainController extends GetxController {
     if (SharedPreMz.sharedPreMzGetLogin() != null) {
       LogIn.usernamecontroller.text = SharedPreMz.sharedPreMzGetLogin()[0];
       LogIn.passwordcontroller.text = SharedPreMz.sharedPreMzGetLogin()[1];
+      LogIn.loginwait = true;
+      update();
       try {
-        LogIn.loginwait = true;
         List? userinfo = await DBController().requestpost(
             url: "${InfoBasic.host}${InfoBasic.customquerypath}",
             data: {
@@ -171,7 +172,6 @@ class MainController extends GetxController {
           LogIn.mainloginerrormsg =
               "${Lang.lang['mainloginerrormsgfaillogin'][Lang.langlist.indexOf(Lang.selectlanguage)]}";
         }
-        LogIn.loginwait = false;
       } catch (e) {
         LogIn.mainloginerrormsg =
             "${Lang.lang['mainloginerrormsg'][Lang.langlist.indexOf(Lang.selectlanguage)]}";
@@ -192,6 +192,7 @@ class MainController extends GetxController {
           "${Lang.lang['passwordnotmatch'][Lang.langlist.indexOf(Lang.selectlanguage)]}";
     } else {
       LogIn.loginwait = true;
+      update();
       try {
         List userinfo = await DBController().requestpost(
             url: "${InfoBasic.host}${InfoBasic.customquerypath}",
@@ -216,15 +217,19 @@ class MainController extends GetxController {
               'customquery':
                   "update users_privileges set mustchgpass=0 where up_user_id=${userinfo[0]['user_id']};"
             });
-
+        await DBController().requestpost(
+            url: "${InfoBasic.host}${InfoBasic.customquerypath}",
+            data: {
+              'customquery':
+                  "insert into logs set log='${DB.userinfotable[0]['username']} edit his password',logdate='${DateTime.now()}';"
+            });
         Get.offNamed('/home');
-        LogIn.loginwait = false;
       } catch (e) {
         LogIn.mainloginerrormsg =
             "${Lang.lang['mainloginerrormsg'][Lang.langlist.indexOf(Lang.selectlanguage)]}";
       }
-      update();
     }
+    LogIn.loginwait = false;
     update();
   }
 
@@ -238,23 +243,23 @@ class MainController extends GetxController {
   }
 
   navbaraction({x}) async {
-    for (var i in BottomNavBarMz.bottomnavitem) {
-      i['angle'] = 0.0;
-      i['y'] = 0.0;
-      i['backcolor'] = Colors.transparent;
-      i['bordercolor'] = Colors.transparent;
+    for (var o = 0; o < BottomNavBarMz.selectedlist.length; o++) {
+      BottomNavBarMz.selectedlist[o] = false;
     }
-    BottomNavBarMz.bottomnavitem[x]['angle'] = 45.0;
-    BottomNavBarMz.bottomnavitem[x]['y'] = -AppBar().preferredSize.height / 3;
-    BottomNavBarMz.bottomnavitem[x]['backcolor'] =
-        ThemeMz.mode == 'light' ? Colors.white : Colors.black;
-    BottomNavBarMz.bottomnavitem[x]['bordercolor'] =
-        ThemeMz.mode == 'light' ? Colors.deepPurple : Colors.amberAccent;
-    BottomNavBarMz.selecteditem = x;
+    BottomNavBarMz.selectedlist[x] = true;
+    switch (x) {
+      case 0:
+        Get.toNamed('/home');
+        break;
+      case 2:
+        DB.logstable = await DBController().getlogsinfo();
+        Get.toNamed('/logs');
+        break;
+      default:
+    }
     update();
   }
 
-  showpersonalinfo({ctx}) {}
   checkpassword({password}) {
     if (DB.userinfotable[0]['password'] == password) {
       return true;
@@ -287,10 +292,23 @@ class MainController extends GetxController {
           "${Lang.lang['passwordnotmatch'][Lang.langlist.indexOf(Lang.selectlanguage)]}";
     } else {
       DialogMz.wait = true;
+      update();
       try {
         await DBController().changpass(
             userid: DB.userinfotable[0]['user_id'],
             password: codepassword(word: newpass));
+        await DBController().requestpost(
+            url: "${InfoBasic.host}${InfoBasic.customquerypath}",
+            data: {
+              'customquery':
+                  "update users_privileges set mustchgpass=0 where up_user_id=${DB.userinfotable[0]['user_id']};"
+            });
+        await DBController().requestpost(
+            url: "${InfoBasic.host}${InfoBasic.customquerypath}",
+            data: {
+              'customquery':
+                  "insert into logs set log='${DB.userinfotable[0]['username']} edit his password',logdate='${DateTime.now()}';"
+            });
         DialogMz.wait = false;
         Get.back();
         logout();
@@ -307,9 +325,46 @@ class MainController extends GetxController {
     update();
   }
 
-  chooseselectedinfo({selected}) {
-    DialogMz.selected = false;
-    selected = true;
+  chooseselectedinfo(x) {
+    for (var o = 0; o < DialogMz.selectedlist.length; o++) {
+      DialogMz.selectedlist[o] = false;
+    }
+    DialogMz.selectedlist[x] = true;
+
+    update();
+  }
+
+  updatepesonalinfo({fullname, mobile, email}) async {
+    DialogMz.errormsg = null;
+    if (fullname.isEmpty) {
+      DialogMz.errormsg =
+          "${Lang.lang['fullnamecheckempty'][Lang.langlist.indexOf(Lang.selectlanguage)]}";
+    } else {
+      DialogMz.wait = true;
+      update();
+      try {
+        await DBController().requestpost(
+            url: "${InfoBasic.host}${InfoBasic.customquerypath}",
+            data: {
+              'customquery':
+                  "update users set fullname='$fullname',mobile='$mobile',email='$email' where user_id=${DB.userinfotable[0]['user_id']};"
+            });
+        await DBController().requestpost(
+            url: "${InfoBasic.host}${InfoBasic.customquerypath}",
+            data: {
+              'customquery':
+                  "insert into logs set log='${DB.userinfotable[0]['username']} edit personal Info As fullname=$fullname,mobile=$mobile,email=$email',logdate='${DateTime.now()}';"
+            });
+        DB.userinfotable = await DBController()
+            .getuserinfo(userid: DB.userinfotable[0]['user_id']);
+
+        Get.back();
+      } catch (e) {
+        DialogMz.errormsg =
+            "${Lang.lang['mainloginerrormsg'][Lang.langlist.indexOf(Lang.selectlanguage)]}";
+      }
+    }
+    DialogMz.wait = false;
     update();
   }
 }
