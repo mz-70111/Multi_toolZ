@@ -78,6 +78,18 @@ class DBController extends GetxController {
     return result;
   }
 
+  getallofficeinfo({userid}) async {
+    List result = [];
+    List officemain = await DBController().requestpost(
+        url: "${InfoBasic.host}${InfoBasic.customquerypath}",
+        data: {'customquery': "select * from office;"});
+    for (var i in officemain) {
+      List officemain = await DBController().requestpost(
+          url: "${InfoBasic.host}${InfoBasic.customquerypath}",
+          data: {'customquery': "select * from office;"});
+    }
+  }
+
   changpass({userid, password}) async {
     await DBController().requestpost(
         url: "${InfoBasic.host}${InfoBasic.customquerypath}",
@@ -98,6 +110,7 @@ class DBController extends GetxController {
         'log_id': '${i['log_id']}',
         'log': '${i['log']}',
         'logdate': '${i['logdate']}',
+        'visible': true
       };
     }
 

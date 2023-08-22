@@ -6,7 +6,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:multi_tools_mz/controllers/db_controller.dart';
+import 'package:multi_tools_mz/pages/homepage.dart';
 import 'package:multi_tools_mz/pages/login.dart';
+import 'package:multi_tools_mz/pages/logs.dart';
 import 'package:multi_tools_mz/pages/splash_screen.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/bottomnavbar.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/database.dart';
@@ -14,8 +16,8 @@ import 'package:multi_tools_mz/tamplate%20and%20theme/dialogmz.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/info_basic.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/languages.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/shared_pre_mz.dart';
-import 'package:multi_tools_mz/tamplate%20and%20theme/theme_Mz.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:intl/intl.dart' as df;
 
 class MainController extends GetxController {
   waitcountdown() async {
@@ -243,6 +245,10 @@ class MainController extends GetxController {
   }
 
   navbaraction({x}) async {
+    try {
+      HomePage.lastpageindex =
+          BottomNavBarMz.selectedlist.indexWhere((element) => element == true);
+    } catch (e) {}
     for (var o = 0; o < BottomNavBarMz.selectedlist.length; o++) {
       BottomNavBarMz.selectedlist[o] = false;
     }
@@ -252,7 +258,6 @@ class MainController extends GetxController {
         Get.toNamed('/home');
         break;
       case 2:
-        DB.logstable = await DBController().getlogsinfo();
         Get.toNamed('/logs');
         break;
       default:
@@ -330,7 +335,7 @@ class MainController extends GetxController {
       DialogMz.selectedlist[o] = false;
     }
     DialogMz.selectedlist[x] = true;
-
+    print(DialogMz.selectedlist);
     update();
   }
 
@@ -365,6 +370,94 @@ class MainController extends GetxController {
       }
     }
     DialogMz.wait = false;
+    update();
+  }
+
+  search(
+      {word,
+      list,
+      required List<String> range,
+      firstdate,
+      lastdate,
+      datelist,
+      columnname}) {
+    for (var t in list) {
+      t['visible'] = false;
+    }
+    for (var i in list) {
+      for (var r in range) {
+        if (i[r.toLowerCase()].contains(word.toLowerCase())) {
+          if (datelist != null) {
+            for (var i in datelist) {
+              if ((DateTime.parse(firstdate)
+                          .isBefore(DateTime.parse(i[columnname])) ||
+                      df.DateFormat('yyyy-MM-dd')
+                              .format(DateTime.parse(firstdate)) ==
+                          df.DateFormat('yyyy-MM-dd')
+                              .format(DateTime.parse(i[columnname]))) &&
+                  (DateTime.parse(lastdate)
+                          .isAfter(DateTime.parse(i[columnname])) ||
+                      df.DateFormat('yyyy-MM-dd')
+                              .format(DateTime.parse(lastdate)) ==
+                          df.DateFormat('yyyy-MM-dd')
+                              .format(DateTime.parse(i[columnname])))) {
+                i['visible'] = true;
+              }
+            }
+          } else {
+            i['visible'] = true;
+          }
+        }
+      }
+    }
+    update();
+  }
+
+  setdate1({x, y, mainlist, sublist, columnname}) async {
+    Logs.datevalue1 = x;
+    for (var t in mainlist) {
+      t['visible'] = false;
+    }
+    for (var i in mainlist) {
+      if ((DateTime.parse(sublist[x.toInt()])
+                  .isBefore(DateTime.parse(i[columnname])) ||
+              df.DateFormat("yyyy-MM-dd")
+                      .format(DateTime.parse(sublist[x.toInt()])) ==
+                  df.DateFormat("yyyy-MM-dd")
+                      .format(DateTime.parse(i[columnname]))) &&
+          ((DateTime.parse(sublist[y.toInt()])
+                  .isAfter(DateTime.parse(i[columnname])) ||
+              df.DateFormat("yyyy-MM-dd")
+                      .format(DateTime.parse(sublist[y.toInt()])) ==
+                  df.DateFormat("yyyy-MM-dd")
+                      .format(DateTime.parse(i[columnname]))))) {
+        i['visible'] = true;
+      }
+    }
+    update();
+  }
+
+  setdate2({x, y, mainlist, sublist, columnname}) async {
+    Logs.datevalue2 = x;
+    for (var t in mainlist) {
+      t['visible'] = false;
+    }
+    for (var i in mainlist) {
+      if ((DateTime.parse(sublist[x.toInt()])
+                  .isAfter(DateTime.parse(i[columnname])) ||
+              df.DateFormat("yyyy-MM-dd")
+                      .format(DateTime.parse(sublist[x.toInt()])) ==
+                  df.DateFormat("yyyy-MM-dd")
+                      .format(DateTime.parse(i[columnname]))) &&
+          ((DateTime.parse(sublist[y.toInt()])
+                  .isBefore(DateTime.parse(i[columnname])) ||
+              df.DateFormat("yyyy-MM-dd")
+                      .format(DateTime.parse(sublist[y.toInt()])) ==
+                  df.DateFormat("yyyy-MM-dd")
+                      .format(DateTime.parse(i[columnname]))))) {
+        i['visible'] = true;
+      }
+    }
     update();
   }
 }

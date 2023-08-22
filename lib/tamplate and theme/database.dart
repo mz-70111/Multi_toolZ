@@ -7,6 +7,7 @@ class DB {
   MainController mainController = Get.find();
 
   static List userinfotable = [];
+  static List allofficeinfotable = [];
   static List logstable = [];
 
   createtables() async {

@@ -70,5 +70,10 @@ class Lang {
       'full name can\'t be empty!!'
     ],
     'logpagetitle': ['سجل الحركات', 'Logs record'],
+    'search': ['بحث', 'search'],
+    'addoffice': ['إضافة مكتب', 'add office'],
+    'officename': ['اسم المكتب', 'office name'],
+    'officechatid': ['chatId', 'chatId'],
+    'officemembers': ['Members', 'أعضاء المكتب']
   };
 }

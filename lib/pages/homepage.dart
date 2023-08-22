@@ -15,6 +15,7 @@ import 'package:multi_tools_mz/tamplate%20and%20theme/tween_mz.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
   static IconData modeicon = Icons.sunny;
+  static int lastpageindex = 0;
   @override
   Widget build(BuildContext context) {
     MainController mainController = Get.find();
@@ -23,7 +24,7 @@ class HomePage extends StatelessWidget {
           {
             'title':
                 "${Lang.lang['drawerpersonalinfo'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
-            'action': () => DialogMz.chgpassshowpersonalDialog(ctx: context),
+            'action': () => DialogMz.showpersonalinfoDialog(ctx: context),
             'icon': Icons.person,
           },
           {
@@ -52,14 +53,14 @@ class HomePage extends StatelessWidget {
             'title':
                 "${Lang.lang['offices'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.work,
-            'action': () {},
+            'action': () => Get.toNamed('/office'),
           },
           {
             'visible': DB.userinfotable[0]['admin'] == '1' ? true : false,
             'title':
                 "${Lang.lang['accounts'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.people,
-            'action': () {},
+            'action': () => Get.toNamed('/accounts'),
           },
           {
             'visible':
@@ -67,7 +68,7 @@ class HomePage extends StatelessWidget {
             'title':
                 "${Lang.lang['tasks'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.task,
-            'action': () {},
+            'action': () => Get.toNamed('/tasks'),
           },
           {
             'visible':
@@ -75,7 +76,7 @@ class HomePage extends StatelessWidget {
             'title':
                 "${Lang.lang['todo'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.question_mark,
-            'action': () {},
+            'action': () => Get.toNamed('/todo'),
           },
           {
             'visible':
@@ -83,7 +84,7 @@ class HomePage extends StatelessWidget {
             'title':
                 "${Lang.lang['remind'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.alarm,
-            'action': () {},
+            'action': () => Get.toNamed('/remind'),
           },
           {
             'visible':
@@ -99,7 +100,7 @@ class HomePage extends StatelessWidget {
             'title':
                 "${Lang.lang['checkemails'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.attach_email,
-            'action': () {},
+            'action': () => Get.toNamed('/email'),
           },
           {
             'visible': DB.userinfotable[0]['pbx'] == '1' ? true : false,
@@ -195,39 +196,42 @@ class HomePage extends StatelessWidget {
                                 durationinmilliseconds: (x + 2) * 300,
                                 child: MouseRegion(
                                     cursor: SystemMouseCursors.click,
-                                    child: Card(
-                                        elevation: 6,
-                                        child: Container(
-                                            decoration: const BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.elliptical(20, 10)),
-                                            ),
-                                            child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Icon(
-                                                      maindepartments()[x]
-                                                          ['icon'],
-                                                      color: Theme.of(context)
-                                                          .iconTheme
-                                                          .color,
+                                    child: GestureDetector(
+                                      onTap: maindepartments()[x]['action'],
+                                      child: Card(
+                                          elevation: 6,
+                                          child: Container(
+                                              decoration: const BoxDecoration(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.elliptical(20, 10)),
+                                              ),
+                                              child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: Icon(
+                                                        maindepartments()[x]
+                                                            ['icon'],
+                                                        color: Theme.of(context)
+                                                            .iconTheme
+                                                            .color,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  Expanded(
-                                                      child: Text(
-                                                    "${maindepartments()[x]['title']}",
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .titleLarge,
-                                                  ))
-                                                ])))));
+                                                    Expanded(
+                                                        child: Text(
+                                                      "${maindepartments()[x]['title']}",
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .titleLarge,
+                                                    ))
+                                                  ]))),
+                                    )));
                           }),
                     ),
                   ),

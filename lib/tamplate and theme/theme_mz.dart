@@ -17,6 +17,10 @@ class ThemeMz {
           onSurface: Colors.amber),
       appBarTheme: const AppBarTheme(backgroundColor: Colors.black12),
       iconTheme: const IconThemeData(color: Colors.yellowAccent),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(15.0))),
+          backgroundColor: Colors.yellow.withOpacity(0.5)),
       elevatedButtonTheme: const ElevatedButtonThemeData(
           style: ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(Colors.black26))),
@@ -47,6 +51,10 @@ class ThemeMz {
           onSurface: Colors.indigoAccent),
       appBarTheme: const AppBarTheme(backgroundColor: Colors.white70),
       iconTheme: const IconThemeData(color: Colors.deepPurple),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(15.0))),
+          backgroundColor: Colors.indigo.withOpacity(0.5)),
       elevatedButtonTheme: const ElevatedButtonThemeData(
           style: ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(Colors.white))),
