@@ -6,8 +6,8 @@ class InfoBasic {
   static String host = 'http://192.168.30.8';
   static String username = 'mz';
   static String password = 'mzrootmz';
-  static String connectdbpath = '/php_API/connect_db.php';
-  static String customquerypath = '/php_API/custom_query.php';
+  static String connectdbpath = '/mz_API/connect_db.php';
+  static String customquerypath = '/mz_API/custom_query.php';
   static List logo = ['T', 'A', 'K', 'A', 'M', 'O', 'L'];
   static TextDirection textDirection() =>
       Lang.selectlanguage == 'Ar' ? TextDirection.rtl : TextDirection.ltr;

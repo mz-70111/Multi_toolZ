@@ -5,7 +5,7 @@ import 'package:multi_tools_mz/tamplate%20and%20theme/info_basic.dart';
 
 class DB {
   MainController mainController = Get.find();
-
+  static List versioninfotable = [];
   static List userinfotable = [];
   static List allofficeinfotable = [];
   static List logstable = [];
@@ -22,6 +22,7 @@ v_id int(11) unique primary key auto_increment,
 version varchar(255),
 android varchar(255),
 windows varchar(255),
+web varchar(255),
 skip tinyint(1) default 0
 );
 '''
@@ -30,9 +31,8 @@ skip tinyint(1) default 0
     await DBController().requestpost(
         url: "${InfoBasic.host}${InfoBasic.customquerypath}",
         data: {
-          'customquery': '''
-insert into version (v_id,version,android,windows,skip)values(1,'v_1.0.1',null,null,0);
-'''
+          'customquery':
+              "insert into version (v_id,version,android,windows,web,skip)values(1,'v_1.0.1',null,null,'http://192.168.30.8',0);"
         });
 
     //create users table
@@ -73,12 +73,10 @@ create table if not exists office
 (
 office_id int(11) unique primary key auto_increment,
 officename varchar(255) unique,
-color varchar(255),
 chatid varchar(255),
 notifi tinyint(1) default 0,
 lastsendtasks timestamp null default null,
-lastsendreminds timestamp null default null,
-autosendtasks tinyint(1) default 0
+lastsendreminds timestamp null default null
 );
 '''
         });
@@ -123,6 +121,7 @@ upo_office_id int(11),
 foreign key (upo_office_id) references office(office_id),
 position varchar(11),
 addtask tinyint(1) default 0,
+addouttask tinyint(1) default 0,
 addtodo tinyint(1) default 0,
 addremind tinyint(1) default 0,
 addemailtest tinyint(1) default 0
@@ -169,27 +168,6 @@ ut_user_id int(11),
 foreign key (ut_user_id) references users(user_id),
 ut_task_id int(11),
 foreign key (ut_task_id) references tasks(task_id)
-);
-'''
-        });
-//create todotable
-    await DBController().requestpost(
-        url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-        data: {
-          'customquery': '''
-create table if not exists todo
-(
-todo_id int(11) unique primary key auto_increment,
-todoname varchar(255) unique,
-tododetails varchar(255),
-createby_id int(11),
-foreign key (createby_id) references users(user_id),
-createdate TIMESTAMP NULL DEFAULT NULL,
-editby_id int(11),
-foreign key (editby_id) references users(user_id),
-editdate TIMESTAMP NULL DEFAULT NULL,
-todo_office_id int(11),
-foreign key (todo_office_id) references office(office_id)
 );
 '''
         });

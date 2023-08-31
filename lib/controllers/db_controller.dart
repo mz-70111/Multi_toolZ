@@ -1,10 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:multi_tools_mz/controllers/main_controller.dart';
-import 'package:multi_tools_mz/pages/login.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/database.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/info_basic.dart';
 
@@ -13,6 +9,7 @@ class DBController extends GetxController {
   void onInit() async {
     super.onInit();
     await DB().createtables();
+    await getversioninfo();
     update();
   }
 
@@ -23,71 +20,62 @@ class DBController extends GetxController {
       if (resp.statusCode == 200) {
         result = json.decode(resp.body);
       }
-    } catch (e) {}
+    } catch (e) {
+      null;
+    }
     return result;
+  }
+
+  gettableinfo({required List tablesname, required List infoqueries}) async {
+    List clmnames = [];
+    List result = [{}];
+
+    for (var i in tablesname) {
+      result[0].addAll({i: []});
+      clmnames.add([]);
+      List resp = await requestpost(
+          url: "${InfoBasic.host}${InfoBasic.customquerypath}",
+          data: {'customquery': ' desc $i;'});
+      for (var j in resp) {
+        clmnames[tablesname.indexOf(i)]!.add(j[0]);
+      }
+    }
+    for (var i in infoqueries) {
+      List? resp = await requestpost(
+          url: "${InfoBasic.host}${InfoBasic.customquerypath}",
+          data: {'customquery': infoqueries[infoqueries.indexOf(i)]});
+      if (resp != null) {
+        for (var j in resp) {
+          result[0][tablesname[infoqueries.indexOf(i)]].add({});
+          for (var o = 0; o < j.length; o++) {
+            result[0][tablesname[infoqueries.indexOf(i)]][resp.indexOf(j)]
+                .addAll({clmnames[infoqueries.indexOf(i)][o]: j[o]});
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+
+  getversioninfo() async {
+    return await gettableinfo(tablesname: [
+      'version'
+    ], infoqueries: [
+      'select * from version',
+    ]);
   }
 
   getuserinfo({userid}) async {
-    List result = [];
-    List userMainInfo = await DBController().requestpost(
-        url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-        data: {'customquery': "select * from users where user_id='$userid';"});
-    List userPrivilege = await DBController().requestpost(
-        url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-        data: {
-          'customquery':
-              "select * from users_privileges where up_user_id=${userMainInfo[0]['user_id']};"
-        });
-
-    List usersPrivOffice = await DBController().requestpost(
-        url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-        data: {
-          'customquery':
-              "select * from users_priv_office where upo_user_id=${userMainInfo[0]['user_id']};"
-        });
-    result.add([]);
-    result[0] = {
-      'user_id': '${userMainInfo[0]['user_id']}',
-      'username': '${userMainInfo[0]['username']}',
-      'password': '${userMainInfo[0]['password']}',
-      'fullname': '${userMainInfo[0]['fullname']}',
-      'email': '${userMainInfo[0]['email']}',
-      'mobile': '${userMainInfo[0]['mobile']}',
-      'admin': '${userPrivilege[0]['admin']}',
-      'enable': '${userPrivilege[0]['enable']}',
-      'mustchgpass': '${userPrivilege[0]['mustchgpass']}',
-      'pbx': '${userPrivilege[0]['pbx']}',
-      'office_priv': []
-    };
-    if (usersPrivOffice.isNotEmpty) {
-      List officepriv = [];
-      officepriv.clear();
-      for (var i in usersPrivOffice) {
-        officepriv.add({});
-        officepriv[usersPrivOffice.indexOf(i)] = {
-          'office_id': i['upo_office_id'],
-          'position': i['position'],
-          'addtask': i['addtask'],
-          'addtodo': i['addtodo'],
-          'addremind': i['addremind'],
-          'addemailtest': i['addemailtest']
-        };
-      }
-      result[0]['office_priv'] = officepriv;
-    }
-    return result;
-  }
-
-  getallofficeinfo({userid}) async {
-    List result = [];
-    List officemain = await DBController().requestpost(
-        url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-        data: {'customquery': "select * from office;"});
-    for (var i in officemain) {
-      List officemain = await DBController().requestpost(
-          url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-          data: {'customquery': "select * from office;"});
-    }
+    return await gettableinfo(tablesname: [
+      'users',
+      'users_privileges',
+      'users_priv_office'
+    ], infoqueries: [
+      'select * from users where user_id=$userid;',
+      'select * from users_privileges where up_user_id=$userid;',
+      'select * from users_priv_office where upo_user_id=$userid;',
+    ]);
   }
 
   changpass({userid, password}) async {

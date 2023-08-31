@@ -75,8 +75,9 @@ class Office extends StatelessWidget {
     return GetBuilder<DBController>(
       init: dbController,
       builder: (_) => FutureBuilder(
-          future: Future(() async =>
-              DB.allofficeinfotable = await DBController().getallofficeinfo()),
+          future: Future(() {}
+              // DB.allofficeinfotable = await DBController().getallofficeinfo()
+              ),
           builder: (_, snap) {
             if (snap.connectionState == ConnectionState.waiting) {
               return const Scaffold(

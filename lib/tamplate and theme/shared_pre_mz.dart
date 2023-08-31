@@ -11,7 +11,7 @@ class SharedPreMz {
   }
 
   static sharedPreMzSetLang({lang}) async {
-    await sharedPreferenceMM.setString('lang', lang ?? 'light');
+    await sharedPreferenceMM.setString('lang', lang ?? 'Ar');
   }
 
   static sharedPreMzGetLang() {
