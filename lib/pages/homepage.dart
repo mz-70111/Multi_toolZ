@@ -8,6 +8,7 @@ import 'package:multi_tools_mz/tamplate%20and%20theme/database.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/dialogmz.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/info_basic.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/languages.dart';
+import 'package:multi_tools_mz/tamplate%20and%20theme/mzlogo.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/shared_pre_mz.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/theme_mz.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/tween_mz.dart';
@@ -49,61 +50,64 @@ class HomePage extends StatelessWidget {
         ];
     List maindepartments() => [
           {
-            'visible': DB.userinfotable[0]['admin'] == '1' ? true : false,
+            'visible':
+                DB.userinfotable[0]['users_privileges'][0]['admin'] == '1'
+                    ? true
+                    : false,
             'title':
                 "${Lang.lang['offices'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.work,
             'action': () => Get.toNamed('/office'),
           },
           {
-            'visible': DB.userinfotable[0]['admin'] == '1' ? true : false,
+            'visible':
+                DB.userinfotable[0]['users_privileges'][0]['admin'] == '1'
+                    ? true
+                    : false,
             'title':
                 "${Lang.lang['accounts'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.people,
             'action': () => Get.toNamed('/accounts'),
           },
           {
-            'visible':
-                DB.userinfotable[0]['office_priv'].isNotEmpty ? true : false,
+            'visible': true,
             'title':
                 "${Lang.lang['tasks'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.task,
             'action': () => Get.toNamed('/tasks'),
           },
           {
-            'visible':
-                DB.userinfotable[0]['office_priv'].isNotEmpty ? true : false,
+            'visible': true,
             'title':
                 "${Lang.lang['todo'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.question_mark,
             'action': () => Get.toNamed('/todo'),
           },
           {
-            'visible':
-                DB.userinfotable[0]['office_priv'].isNotEmpty ? true : false,
+            'visible': true,
             'title':
                 "${Lang.lang['remind'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.alarm,
             'action': () => Get.toNamed('/remind'),
           },
           {
-            'visible':
-                DB.userinfotable[0]['office_priv'].isNotEmpty ? true : false,
+            'visible': true,
             'title':
                 "${Lang.lang['ping'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.wifi,
             'action': () {},
           },
           {
-            'visible':
-                DB.userinfotable[0]['office_priv'].isNotEmpty ? true : false,
+            'visible': true,
             'title':
                 "${Lang.lang['checkemails'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.attach_email,
             'action': () => Get.toNamed('/email'),
           },
           {
-            'visible': DB.userinfotable[0]['pbx'] == '1' ? true : false,
+            'visible': DB.userinfotable[0]['users_privileges'][0]['pbx'] == '1'
+                ? true
+                : false,
             'title':
                 "${Lang.lang['pbx'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.phone,
@@ -141,6 +145,7 @@ class HomePage extends StatelessWidget {
                   child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  MZLogo(),
                   ...draweritems().map((e) => TweenMz.translatex(
                         durationinmilliseconds: 300,
                         begin: -200.0,

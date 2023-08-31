@@ -74,6 +74,6 @@ class Lang {
     'addoffice': ['إضافة مكتب', 'add office'],
     'officename': ['اسم المكتب', 'office name'],
     'officechatid': ['chatId', 'chatId'],
-    'officemembers': ['Members', 'أعضاء المكتب']
+    'officemembers': ['أعضاء المكتب', 'Members'],
   };
 }

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:multi_tools_mz/controllers/main_controller.dart';
+import 'package:multi_tools_mz/pages/login.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/bottomnavbar.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/database.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/info_basic.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/languages.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/textfield_mz.dart';
-import 'package:multi_tools_mz/tamplate%20and%20theme/tween_mz.dart';
 
 class DialogMz {
   static bool wait = false, textfieldvisible = true, action2visible = false;
@@ -128,17 +128,32 @@ class DialogMz {
 
   static showpersonalinfoDialog({ctx}) {
     TextEditingController fullname = TextEditingController(
-        text: DB.userinfotable[0]['fullname'] == 'null'
+        text: DB.userinfotable[0]['users'][DB.userinfotable[0]['users']
+                        .indexWhere((element) => element['user_id'] == LogIn.userinfo![2])]
+                    ['fullname'] ==
+                'null'
             ? ''
-            : DB.userinfotable[0]['fullname']);
+            : DB.userinfotable[0]['users'][DB.userinfotable[0]['users']
+                    .indexWhere((element) => element['user_id'] == LogIn.userinfo![2])]
+                ['fullname']);
     TextEditingController mobile = TextEditingController(
-        text: DB.userinfotable[0]['mobile'] == 'null'
+        text: DB.userinfotable[0]['users'][DB.userinfotable[0]['users']
+                        .indexWhere((element) => element['user_id'] == LogIn.userinfo![2])]
+                    ['mobile'] ==
+                'null'
             ? ''
-            : DB.userinfotable[0]['mobile']);
+            : DB.userinfotable[0]['users'][DB.userinfotable[0]['users']
+                    .indexWhere((element) => element['user_id'] == LogIn.userinfo![2])]
+                ['mobile']);
     TextEditingController email = TextEditingController(
-        text: DB.userinfotable[0]['email'] == 'null'
+        text: DB.userinfotable[0]['users'][DB.userinfotable[0]['users']
+                        .indexWhere((element) => element['user_id'] == LogIn.userinfo![2])]
+                    ['email'] ==
+                'null'
             ? ''
-            : DB.userinfotable[0]['email']);
+            : DB.userinfotable[0]['users'][DB.userinfotable[0]['users']
+                    .indexWhere((element) => element['user_id'] == LogIn.userinfo![2])]
+                ['email']);
     List textfieldmz() => [
           {
             'controller': fullname,
@@ -212,16 +227,16 @@ class DialogMz {
           },
         ];
     List basicpriv = [
-      DB.userinfotable[0]['mustchgpass'] == '1'
+      DB.userinfotable[0]['users_privileges'][0]['mustchgpass'] == '1'
           ? Lang.lang['mustchgpass'][Lang.langlist.indexOf(Lang.selectlanguage)]
           : 0,
-      DB.userinfotable[0]['enable'] == '1'
+      DB.userinfotable[0]['users_privileges'][0]['enable'] == '1'
           ? Lang.lang['enable1'][Lang.langlist.indexOf(Lang.selectlanguage)]
           : 0,
-      DB.userinfotable[0]['admin'] == '1'
+      DB.userinfotable[0]['users_privileges'][0]['admin'] == '1'
           ? Lang.lang['admin'][Lang.langlist.indexOf(Lang.selectlanguage)]
           : 0,
-      DB.userinfotable[0]['pbx'] == '1'
+      DB.userinfotable[0]['users_privileges'][0]['pbx'] == '1'
           ? Lang.lang['pbxaccess'][Lang.langlist.indexOf(Lang.selectlanguage)]
           : 0,
     ];
@@ -242,7 +257,6 @@ class DialogMz {
               : 0,
         ];
     errormsg = null;
-
     return showDialog(
         context: ctx,
         builder: (_) {
@@ -269,81 +283,60 @@ class DialogMz {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Row(children: [
-                                    ...maindept()
-                                        .where((element) =>
-                                            selectedlist[element['index']] ==
-                                            true)
-                                        .map((e) {
-                                      return Expanded(
-                                        child: Card(
-                                            elevation: 10,
-                                            shadowColor:
-                                                selectedlist[e['index']] == true
-                                                    ? Colors.deepOrangeAccent
-                                                    : Colors.grey
-                                                        .withOpacity(0.1),
-                                            child: TextButton.icon(
-                                              icon: Icon(e['icon']),
-                                              onPressed: e['action'],
-                                              label: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: SingleChildScrollView(
-                                                    scrollDirection:
-                                                        Axis.horizontal,
-                                                    child: Text(
-                                                      e['label'],
-                                                      style: Theme.of(ctx)
-                                                          .textTheme
-                                                          .titleSmall,
-                                                      overflow:
-                                                          TextOverflow.fade,
-                                                    ),
-                                                  )),
-                                            )),
-                                      );
-                                    })
-                                  ]),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    children: [
-                                      ...maindept()
-                                          .where((element) =>
-                                              selectedlist[element['index']] !=
-                                              true)
-                                          .map((e) {
-                                        return Container(
-                                          decoration: BoxDecoration(
-                                              border: Border.all()),
-                                          child: IconButton(
-                                              onPressed: e['action'],
-                                              icon: Icon(e['icon'])),
-                                        );
-                                      })
-                                    ],
-                                  ),
-                                )
-                              ],
+                            SizedBox(
+                              height: maindept().length * 60,
+                              width: MediaQuery.of(ctx).size.width < 500
+                                  ? MediaQuery.of(ctx).size.width
+                                  : 500,
+                              child: GridView.builder(
+                                  itemCount: maindept().length,
+                                  gridDelegate:
+                                      SliverGridDelegateWithMaxCrossAxisExtent(
+                                          mainAxisExtent: 60,
+                                          maxCrossAxisExtent: MediaQuery.of(ctx)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? MediaQuery.of(ctx).size.width
+                                              : 500),
+                                  itemBuilder: (_, x) {
+                                    return Card(
+                                        elevation: 10,
+                                        shadowColor: selectedlist[maindept()[x]
+                                                    ['index']] ==
+                                                true
+                                            ? Colors.deepOrangeAccent
+                                            : Colors.grey.withOpacity(0.1),
+                                        child: TextButton.icon(
+                                          icon: Icon(maindept()[x]['icon']),
+                                          onPressed: maindept()[x]['action'],
+                                          label: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: SingleChildScrollView(
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                child: Text(
+                                                  maindept()[x]['label'],
+                                                  style: Theme.of(ctx)
+                                                      .textTheme
+                                                      .titleMedium,
+                                                  overflow: TextOverflow.fade,
+                                                ),
+                                              )),
+                                        ));
+                                  }),
                             ),
-                            Divider(),
                             Visibility(
                                 visible: selectedlist[0],
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "${Lang.lang['id'][Lang.langlist.indexOf(Lang.selectlanguage)]}: ${DB.userinfotable[0]['user_id']} ",
+                                      "${Lang.lang['id'][Lang.langlist.indexOf(Lang.selectlanguage)]}: ${DB.userinfotable[0]['users'][0]['user_id']} ",
                                     ),
                                     Text(
-                                        "${Lang.lang['username'][Lang.langlist.indexOf(Lang.selectlanguage)]}: ${DB.userinfotable[0]['username']}"),
+                                        "${Lang.lang['username'][Lang.langlist.indexOf(Lang.selectlanguage)]}: ${DB.userinfotable[0]['users'][0]['username']}"),
                                     ...textfieldmz().map((e) => TextFieldMZ(
                                           label: e['label'],
                                           onchange: (x) => null,
@@ -369,15 +362,22 @@ class DialogMz {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    ...DB.userinfotable[0]['office_priv']
+                                    ...DB.userinfotable[0]['users_priv_office']
                                         .map((e) {
+                                      int index(table, idname) =>
+                                          DB.allofficeinfotable[0][table]
+                                              .indexWhere((element) =>
+                                                  element[idname] ==
+                                                  e['upo_office_id']);
                                       return Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text("${e['office_id']}"),
+                                            Text(
+                                                "${DB.allofficeinfotable[0]['office'][index('office', 'office_id')]['officename']}"),
                                             const Divider(),
-                                            Text("${e['position']}"),
+                                            Text(
+                                                "${DB.allofficeinfotable[0]['users_priv_office'][index('users_priv_office', 'upo_office_id')]['position']}"),
                                             ...privatoffice(e)
                                                 .where(
                                                     (element) => element != 0)
@@ -425,7 +425,6 @@ class DialogMz {
             'visible': wait,
           }
         ];
-
     errormsg = null;
     return showDialog(
         context: ctx,
@@ -454,92 +453,52 @@ class DialogMz {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: Row(children: [
-                                      ...maindept
-                                          .where((element) =>
-                                              selectedlist[element['index']] ==
-                                              true)
-                                          .map((e) {
-                                        return Expanded(
-                                          child: Card(
-                                              elevation: 10,
-                                              shadowColor:
-                                                  selectedlist[e['index']] ==
-                                                          true
-                                                      ? Colors.deepOrangeAccent
-                                                      : Colors.grey
-                                                          .withOpacity(0.1),
-                                              child: TextButton.icon(
-                                                icon: Icon(e['icon']),
-                                                onPressed: e['action'],
-                                                label: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child:
-                                                        SingleChildScrollView(
-                                                      scrollDirection:
-                                                          Axis.horizontal,
-                                                      child: Text(
-                                                        e['label'],
-                                                        style: Theme.of(ctx)
-                                                            .textTheme
-                                                            .titleSmall,
-                                                        overflow:
-                                                            TextOverflow.fade,
-                                                      ),
-                                                    )),
-                                              )),
-                                        );
-                                      })
-                                    ]),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      children: [
-                                        ...maindept
-                                            .where((element) =>
-                                                selectedlist[
-                                                    element['index']] !=
-                                                true)
-                                            .map((e) {
-                                          return Container(
-                                            decoration: BoxDecoration(
-                                                border: Border.all()),
-                                            child: IconButton(
-                                                onPressed: e['action'],
-                                                icon: Icon(e['icon'])),
-                                          );
-                                        })
-                                      ],
-                                    ),
-                                  )
-                                ],
+                              SizedBox(
+                                height: maindept.length * 60,
+                                width: MediaQuery.of(ctx).size.width < 500
+                                    ? MediaQuery.of(ctx).size.width
+                                    : 500,
+                                child: GridView.builder(
+                                    itemCount: maindept.length,
+                                    gridDelegate:
+                                        SliverGridDelegateWithMaxCrossAxisExtent(
+                                            mainAxisExtent: 60,
+                                            maxCrossAxisExtent:
+                                                MediaQuery.of(ctx).size.width <
+                                                        500
+                                                    ? MediaQuery.of(ctx)
+                                                        .size
+                                                        .width
+                                                    : 500),
+                                    itemBuilder: (_, x) {
+                                      return Card(
+                                          elevation: 10,
+                                          shadowColor: selectedlist[maindept[x]
+                                                      ['index']] ==
+                                                  true
+                                              ? Colors.deepOrangeAccent
+                                              : Colors.grey.withOpacity(0.1),
+                                          child: TextButton.icon(
+                                            icon: Icon(maindept[x]['icon']),
+                                            onPressed: maindept[x]['action'],
+                                            label: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: SingleChildScrollView(
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  child: Text(
+                                                    maindept[x]['label'],
+                                                    style: Theme.of(ctx)
+                                                        .textTheme
+                                                        .titleMedium,
+                                                    overflow: TextOverflow.fade,
+                                                  ),
+                                                )),
+                                          ));
+                                    }),
                               ),
-                              ...maindept[selectedlist.indexWhere(
-                                          (element) => element == true)]
-                                      ['widgetlist']
-                                  .where(
-                                      (wl) => selectedlist[wl['index']] == true)
-                                  .map((ee) => ee['widgettype'] == TextField
-                                      ? TextFieldMZ(
-                                          label: ee['label'],
-                                          onchange: (x) => null,
-                                          action: () => null,
-                                          ontap: () => null,
-                                          controller: ee['controller'],
-                                        )
-                                      : ee['widgettype'] == Row
-                                          ? Row(
-                                              children: ee['children'],
-                                            )
-                                          : SizedBox()),
+                              ...maindept.where((element) => selectedlist[element['index']]==true).map((m) => m['widget']),
                               Visibility(
                                   visible: errormsg == null ? false : true,
                                   child: Text("$errormsg")),

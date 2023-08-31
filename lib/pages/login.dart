@@ -73,6 +73,7 @@ class LogIn extends StatelessWidget {
     return FutureBuilder(
       future: Future(() async {
         await mainController.autologin();
+        LogIn.mainloginerrormsg = null;
       }),
       builder: (_, snap) {
         if (snap.connectionState == ConnectionState.waiting) {

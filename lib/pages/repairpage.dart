@@ -19,6 +19,10 @@ class RepairPage extends StatelessWidget {
       builder: (_) => Scaffold(
           body: FutureBuilder(
               future: Future.delayed(const Duration(seconds: 2), () async {
+                DB.allofficeinfotable =
+                    await DBController().getallofficeinfotable();
+                DB.allusersinfotable =
+                    await DBController().getallusersinfotable();
                 return DB.versioninfotable =
                     await DBController().getversioninfo();
               }),

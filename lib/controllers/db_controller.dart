@@ -54,6 +54,10 @@ class DBController extends GetxController {
         }
       }
     }
+    for (var i = 0; i < result[0][tablesname[0]].length; i++) {
+      result[0][tablesname[0]][i]
+          .addAll({'visible': true, 'visiblesearch': true});
+    }
 
     return result;
   }
@@ -75,6 +79,38 @@ class DBController extends GetxController {
       'select * from users where user_id=$userid;',
       'select * from users_privileges where up_user_id=$userid;',
       'select * from users_priv_office where upo_user_id=$userid;',
+    ]);
+  }
+
+  getallusersinfotable() async {
+    return await gettableinfo(tablesname: [
+      'users',
+      'users_privileges',
+      'users_priv_office'
+    ], infoqueries: [
+      'select * from users;',
+      'select * from users_privileges;',
+      'select * from users_priv_office;',
+    ]);
+  }
+
+  getofficeinfotable({officeid}) async {
+    return await gettableinfo(tablesname: [
+      'office',
+      'users_priv_office'
+    ], infoqueries: [
+      'select * from office where office_id=$officeid;',
+      'select * from users_priv_office where upo_office_id=$officeid;',
+    ]);
+  }
+
+  getallofficeinfotable() async {
+    return await gettableinfo(tablesname: [
+      'office',
+      'users_priv_office'
+    ], infoqueries: [
+      'select * from office;',
+      'select * from users_priv_office;',
     ]);
   }
 

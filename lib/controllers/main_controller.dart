@@ -83,6 +83,7 @@ class MainController extends GetxController {
   }
 
   checklogin() async {
+    List? userinfo = [];
     LogIn.mainloginerrormsg = LogIn.loginerrormsg = null;
     update();
     if (LogIn.usernamecontroller.text.isEmpty ||
@@ -93,25 +94,23 @@ class MainController extends GetxController {
       LogIn.loginwait = true;
       update();
       try {
-        List? userinfo = await DBController().requestpost(
-            url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-            data: {
-              'customquery':
-                  "select * from users where username='${LogIn.usernamecontroller.text.toLowerCase()}' and password='${codepassword(word: LogIn.passwordcontroller.text)}';"
-            });
-        if (userinfo!.isNotEmpty) {
-          List? accountstatus = await DBController().requestpost(
-              url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-              data: {
-                'customquery':
-                    "select * from users_privileges where up_user_id='${userinfo[0]['user_id']}';"
-              });
-          if (accountstatus![0]['enable'] == '1') {
-            if (accountstatus[0]['mustchgpass'] == '0') {
+        userinfo = await DBController().gettableinfo(tablesname: [
+          'users'
+        ], infoqueries: [
+          "select * from users where username='${LogIn.usernamecontroller.text.toLowerCase()}' and password='${codepassword(word: LogIn.passwordcontroller.text)}';"
+        ]);
+        if (userinfo![0]['users'].isNotEmpty) {
+          List? accountstatus = await DBController().gettableinfo(tablesname: [
+            'users_privileges'
+          ], infoqueries: [
+            "select * from users_privileges where up_user_id=${userinfo[0]['users'][0]['user_id']};"
+          ]);
+          if (accountstatus![0]['users_privileges'][0]['enable'] == '1') {
+            if (accountstatus[0]['users_privileges'][0]['mustchgpass'] == '0') {
               await SharedPreMz.sharedPreMzSetLogin(login: [
-                userinfo[0]['username'],
+                userinfo[0]['users'][0]['username'],
                 LogIn.passwordcontroller.text,
-                userinfo[0]['user_id']
+                userinfo[0]['users'][0]['user_id']
               ]);
               LogIn.userinfo = SharedPreMz.sharedPreMzGetLogin();
               DB.userinfotable =
@@ -142,23 +141,27 @@ class MainController extends GetxController {
       LogIn.usernamecontroller.text = SharedPreMz.sharedPreMzGetLogin()[0];
       LogIn.passwordcontroller.text = SharedPreMz.sharedPreMzGetLogin()[1];
       LogIn.loginwait = true;
+      LogIn.mainloginerrormsg = null;
       update();
       try {
-        List? userinfo = await DBController().requestpost(
-            url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-            data: {
-              'customquery':
-                  "select * from users where username='${LogIn.usernamecontroller.text.toLowerCase()}' and password='${codepassword(word: LogIn.passwordcontroller.text)}';"
-            });
-        if (userinfo!.isNotEmpty) {
-          List? accountstatus = await DBController().requestpost(
-              url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-              data: {
-                'customquery':
-                    "select * from users_privileges where up_user_id='${userinfo[0]['user_id']}';"
-              });
-          if (accountstatus![0]['enable'] == '1') {
-            if (accountstatus[0]['mustchgpass'] == '0') {
+        List? userinfo = await DBController().gettableinfo(tablesname: [
+          'users'
+        ], infoqueries: [
+          "select * from users where username='${LogIn.usernamecontroller.text.toLowerCase()}' and password='${codepassword(word: LogIn.passwordcontroller.text)}';"
+        ]);
+        if (userinfo![0]['users'].isNotEmpty) {
+          List? accountstatus = await DBController().gettableinfo(tablesname: [
+            'users_privileges'
+          ], infoqueries: [
+            "select * from users_privileges where up_user_id=${userinfo[0]['users'][0]['user_id']};"
+          ]);
+          if (accountstatus![0]['users_privileges'][0]['enable'] == '1') {
+            if (accountstatus[0]['users_privileges'][0]['mustchgpass'] == '0') {
+              await SharedPreMz.sharedPreMzSetLogin(login: [
+                userinfo[0]['users'][0]['username'],
+                LogIn.passwordcontroller.text,
+                userinfo[0]['users'][0]['user_id']
+              ]);
               LogIn.userinfo = SharedPreMz.sharedPreMzGetLogin();
               DB.userinfotable =
                   await DBController().getuserinfo(userid: LogIn.userinfo![2]);
@@ -196,19 +199,18 @@ class MainController extends GetxController {
       LogIn.loginwait = true;
       update();
       try {
-        List userinfo = await DBController().requestpost(
-            url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-            data: {
-              'customquery':
-                  "select * from users where username='${LogIn.usernamecontroller.text.toLowerCase()}';"
-            });
+        List? userinfo = await DBController().gettableinfo(tablesname: [
+          'users'
+        ], infoqueries: [
+          "select * from users where username='${LogIn.usernamecontroller.text.toLowerCase()}';"
+        ]);
         await DBController().changpass(
-            userid: userinfo[0]['user_id'],
+            userid: userinfo![0]['users'][0]['user_id'],
             password: codepassword(word: LogIn.newpasswordcontroller.text));
         await SharedPreMz.sharedPreMzSetLogin(login: [
-          userinfo[0]['username'],
+          userinfo[0]['users'][0]['username'],
           LogIn.newpasswordcontroller.text,
-          userinfo[0]['user_id']
+          userinfo[0]['users'][0]['user_id']
         ]);
         LogIn.userinfo = SharedPreMz.sharedPreMzGetLogin();
         DB.userinfotable =
@@ -217,7 +219,7 @@ class MainController extends GetxController {
             url: "${InfoBasic.host}${InfoBasic.customquerypath}",
             data: {
               'customquery':
-                  "update users_privileges set mustchgpass=0 where up_user_id=${userinfo[0]['user_id']};"
+                  "update users_privileges set mustchgpass=0 where up_user_id=${userinfo[0]['users'][0]['user_id']};"
             });
         await DBController().requestpost(
             url: "${InfoBasic.host}${InfoBasic.customquerypath}",
@@ -266,7 +268,7 @@ class MainController extends GetxController {
   }
 
   checkpassword({password}) {
-    if (DB.userinfotable[0]['password'] == password) {
+    if (DB.userinfotable[0]['users'][0]['password'] == password) {
       return true;
     } else {
       return false;
@@ -300,19 +302,19 @@ class MainController extends GetxController {
       update();
       try {
         await DBController().changpass(
-            userid: DB.userinfotable[0]['user_id'],
+            userid: DB.userinfotable[0]['users'][0]['user_id'],
             password: codepassword(word: newpass));
         await DBController().requestpost(
             url: "${InfoBasic.host}${InfoBasic.customquerypath}",
             data: {
               'customquery':
-                  "update users_privileges set mustchgpass=0 where up_user_id=${DB.userinfotable[0]['user_id']};"
+                  "update users_privileges set mustchgpass=0 where up_user_id=${DB.userinfotable[0]['users'][0]['user_id']};"
             });
         await DBController().requestpost(
             url: "${InfoBasic.host}${InfoBasic.customquerypath}",
             data: {
               'customquery':
-                  "insert into logs set log='${DB.userinfotable[0]['username']} edit his password',logdate='${DateTime.now()}';"
+                  "insert into logs set log='${DB.userinfotable[0]['users'][0]['username']} edit his password',logdate='${DateTime.now()}';"
             });
         DialogMz.wait = false;
         Get.back();
@@ -335,7 +337,6 @@ class MainController extends GetxController {
       DialogMz.selectedlist[o] = false;
     }
     DialogMz.selectedlist[x] = true;
-    print(DialogMz.selectedlist);
     update();
   }
 
@@ -352,16 +353,16 @@ class MainController extends GetxController {
             url: "${InfoBasic.host}${InfoBasic.customquerypath}",
             data: {
               'customquery':
-                  "update users set fullname='$fullname',mobile='$mobile',email='$email' where user_id=${DB.userinfotable[0]['user_id']};"
+                  "update users set fullname='$fullname',mobile='$mobile',email='$email' where user_id=${DB.userinfotable[0]['users'][0]['user_id']};"
             });
         await DBController().requestpost(
             url: "${InfoBasic.host}${InfoBasic.customquerypath}",
             data: {
               'customquery':
-                  "insert into logs set log='${DB.userinfotable[0]['username']} edit personal Info As fullname=$fullname,mobile=$mobile,email=$email',logdate='${DateTime.now()}';"
+                  "insert into logs set log='${DB.userinfotable[0]['users'][0]['username']} edit personal Info As fullname=$fullname,mobile=$mobile,email=$email',logdate='${DateTime.now()}';"
             });
         DB.userinfotable = await DBController()
-            .getuserinfo(userid: DB.userinfotable[0]['user_id']);
+            .getuserinfo(userid: DB.userinfotable[0]['users'][0]['user_id']);
 
         Get.back();
       } catch (e) {
@@ -382,11 +383,11 @@ class MainController extends GetxController {
       datelist,
       columnname}) {
     for (var t in list) {
-      t['visible'] = false;
+      t['visiblesearch'] = false;
     }
     for (var i in list) {
       for (var r in range) {
-        if (i[r.toLowerCase()].contains(word.toLowerCase())) {
+        if (i[r].toString().isCaseInsensitiveContains(word)) {
           if (datelist != null) {
             for (var i in datelist) {
               if ((DateTime.parse(firstdate)
@@ -401,11 +402,11 @@ class MainController extends GetxController {
                               .format(DateTime.parse(lastdate)) ==
                           df.DateFormat('yyyy-MM-dd')
                               .format(DateTime.parse(i[columnname])))) {
-                i['visible'] = true;
+                i['visiblesearch'] = true;
               }
             }
           } else {
-            i['visible'] = true;
+            i['visiblesearch'] = true;
           }
         }
       }

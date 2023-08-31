@@ -8,6 +8,7 @@ class DB {
   static List versioninfotable = [];
   static List userinfotable = [];
   static List allofficeinfotable = [];
+  static List allusersinfotable = [];
   static List logstable = [];
 
   createtables() async {
