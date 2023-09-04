@@ -6,6 +6,7 @@ import 'package:multi_tools_mz/pages/login.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/bottomnavbar.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/database.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/dialogmz.dart';
+import 'package:multi_tools_mz/tamplate%20and%20theme/dropmz.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/info_basic.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/languages.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/mzlogo.dart';
@@ -57,7 +58,10 @@ class HomePage extends StatelessWidget {
             'title':
                 "${Lang.lang['offices'][Lang.langlist.indexOf(Lang.selectlanguage)]}",
             'icon': Icons.work,
-            'action': () => Get.toNamed('/office'),
+            'action': () {
+              Get.toNamed('/office');
+              mainController.navbaraction(x: 3);
+            },
           },
           {
             'visible':
@@ -145,7 +149,6 @@ class HomePage extends StatelessWidget {
                   child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  MZLogo(),
                   ...draweritems().map((e) => TweenMz.translatex(
                         durationinmilliseconds: 300,
                         begin: -200.0,

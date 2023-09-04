@@ -6,12 +6,11 @@ class ChatController extends GetxController {
   getchatnotifi({reciverid}) async {
     List? notifi;
     try {
-      notifi = await DBController().requestpost(
-          url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-          data: {
-            'customquery':
-                "select * from chat where reciever_id=$reciverid and readstatus=0;"
-          });
+      notifi = await DBController()
+          .requestpost(url: "${InfoBasic.host}${InfoBasic.selecttable}", data: {
+        'customquery':
+            "select * from chat where reciever_id=$reciverid and readstatus=0;"
+      });
     } catch (e) {
       return null;
     }

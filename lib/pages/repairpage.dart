@@ -19,18 +19,21 @@ class RepairPage extends StatelessWidget {
       builder: (_) => Scaffold(
           body: FutureBuilder(
               future: Future.delayed(const Duration(seconds: 2), () async {
-                DB.allofficeinfotable =
-                    await DBController().getallofficeinfotable();
-                DB.allusersinfotable =
-                    await DBController().getallusersinfotable();
-                return DB.versioninfotable =
-                    await DBController().getversioninfo();
+                try {
+                  DB.allofficeinfotable =
+                      await DBController().getallofficeinfotable();
+                  DB.allusersinfotable =
+                      await DBController().getallusersinfotable();
+                  return DB.versioninfotable =
+                      await DBController().getversioninfo();
+                } catch (e) {}
               }),
               builder: (_, snap) {
                 if (snap.connectionState == ConnectionState.waiting) {
                   mainController.waitcountdown();
                   return const SplashScreen();
-                } else if (!snap.hasData) {
+                } else if (!snap.hasData ||
+                    DB.versioninfotable[0]['version'].isEmpty) {
                   SplashScreen.waittime = 1;
                   return Center(
                     child: Column(

@@ -401,11 +401,14 @@ class DialogMz {
         });
   }
 
-  static additemDialog({ctx, title, required List maindept}) {
+  static addedit(
+      {ctx, maintitle, required List maindept, type = 'add', action}) {
     List actionrow() => [
           {
             'widget': ElevatedButton(
-                onPressed: () async {}, child: const Icon(Icons.save)),
+                onPressed: action,
+                child: Text(Lang.lang[type == 'add' ? 'add' : 'save']
+                    [Lang.langlist.indexOf(Lang.selectlanguage)])),
             'visible': !wait,
           },
           {
@@ -414,7 +417,8 @@ class DialogMz {
                   Get.back();
                   wait = false;
                 },
-                child: const Icon(Icons.cancel)),
+                child: Text(Lang.lang['cancle']
+                    [Lang.langlist.indexOf(Lang.selectlanguage)])),
             'visible': true,
           },
           {
@@ -426,7 +430,7 @@ class DialogMz {
           }
         ];
     errormsg = null;
-    return showDialog(
+    showDialog(
         context: ctx,
         builder: (_) {
           selectedlist.clear();
@@ -442,73 +446,127 @@ class DialogMz {
               child: GetBuilder<MainController>(
                   init: mainController,
                   builder: (_) {
-                    return SizedBox(
-                      width: MediaQuery.of(ctx).size.width > 500
-                          ? 500
-                          : MediaQuery.of(ctx).size.width,
-                      child: AlertDialog(
-                        scrollable: true,
-                        title: Text(title),
-                        content: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(
-                                height: maindept.length * 60,
-                                width: MediaQuery.of(ctx).size.width < 500
-                                    ? MediaQuery.of(ctx).size.width
-                                    : 500,
-                                child: GridView.builder(
-                                    itemCount: maindept.length,
-                                    gridDelegate:
-                                        SliverGridDelegateWithMaxCrossAxisExtent(
-                                            mainAxisExtent: 60,
-                                            maxCrossAxisExtent:
-                                                MediaQuery.of(ctx).size.width <
-                                                        500
-                                                    ? MediaQuery.of(ctx)
-                                                        .size
-                                                        .width
-                                                    : 500),
-                                    itemBuilder: (_, x) {
-                                      return Card(
-                                          elevation: 10,
-                                          shadowColor: selectedlist[maindept[x]
-                                                      ['index']] ==
-                                                  true
-                                              ? Colors.deepOrangeAccent
-                                              : Colors.grey.withOpacity(0.1),
-                                          child: TextButton.icon(
-                                            icon: Icon(maindept[x]['icon']),
-                                            onPressed: maindept[x]['action'],
-                                            label: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: SingleChildScrollView(
-                                                  scrollDirection:
-                                                      Axis.horizontal,
-                                                  child: Text(
-                                                    maindept[x]['label'],
-                                                    style: Theme.of(ctx)
-                                                        .textTheme
-                                                        .titleMedium,
-                                                    overflow: TextOverflow.fade,
-                                                  ),
-                                                )),
-                                          ));
-                                    }),
-                              ),
-                              ...maindept.where((element) => selectedlist[element['index']]==true).map((m) => m['widget']),
-                              Visibility(
-                                  visible: errormsg == null ? false : true,
-                                  child: Text("$errormsg")),
-                            ]),
-                        actions: [
-                          ...actionrow()
-                              .where((e) => e['visible'] == true)
-                              .map((e) => e['widget'])
+                    return AlertDialog(
+                      scrollable: true,
+                      content: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              flex: MediaQuery.of(ctx).size.width < 500
+                                  ? 0
+                                  : 1,
+                              child: SizedBox()),
+                          Expanded(
+                            flex: 5,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.center,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      maintitle,
+                                      style: Theme.of(ctx)
+                                          .textTheme
+                                          .titleLarge,
+                                    ),
+                                    Divider(),
+                                    SizedBox(
+                                      height: maindept.length /
+                                                  (MediaQuery.of(ctx)
+                                                          .size
+                                                          .width /
+                                                      500)
+                                              *
+                                          60,
+                                      width: MediaQuery.of(ctx)
+                                                  .size
+                                                  .width <
+                                              500
+                                          ? MediaQuery.of(ctx).size.width
+                                          : 500,
+                                      child: GridView.builder(
+                                          itemCount: maindept.length,
+                                          gridDelegate:
+                                              SliverGridDelegateWithMaxCrossAxisExtent(
+                                                  mainAxisExtent: 60,
+                                                  maxCrossAxisExtent:
+                                                      MediaQuery.of(ctx)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? MediaQuery.of(
+                                                                  ctx)
+                                                              .size
+                                                              .width
+                                                          : 400),
+                                          itemBuilder: (_, x) {
+                                            return Card(
+                                                elevation: 10,
+                                                shadowColor: selectedlist[
+                                                            maindept[x][
+                                                                'index']] ==
+                                                        true
+                                                    ? Colors.black54
+                                                    : Colors.grey
+                                                        .withOpacity(0.1),
+                                                child: TextButton.icon(
+                                                  icon: Icon(maindept[x]
+                                                      ['icon']),
+                                                  onPressed: maindept[x]
+                                                      ['action'],
+                                                  label: Padding(
+                                                      padding:
+                                                          const EdgeInsets
+                                                              .all(8.0),
+                                                      child: Text(
+                                                        maindept[x]
+                                                            ['label'],
+                                                        style: Theme.of(
+                                                                ctx)
+                                                            .textTheme
+                                                            .titleMedium,
+                                                        overflow:
+                                                            TextOverflow
+                                                                .fade,
+                                                      )),
+                                                ));
+                                          }),
+                                    ),
+                                    ...maindept
+                                        .where((element) =>
+                                            selectedlist[
+                                                element['index']] ==
+                                            true)
+                                        .map((m) => m['widget']),
+                                    Visibility(
+                                        visible: errormsg == null
+                                            ? false
+                                            : true,
+                                        child: Text("$errormsg")),
+                                
+                                  ]),
+                            ),
+                          ),
+                          Expanded(
+                              flex: MediaQuery.of(ctx).size.width < 500
+                                  ? 0
+                                  : 1,
+                              child: SizedBox()),
                         ],
                       ),
+                      actions: [...actionrow()
+                                                    .where((e) =>
+                                                        e['visible'] == true)
+                                                    .map((e) => Padding(
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .all(8.0),
+                                                        child: e['widget']))],
                     );
                   }));
         });

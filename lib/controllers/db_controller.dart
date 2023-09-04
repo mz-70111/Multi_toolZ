@@ -1,48 +1,59 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:multi_tools_mz/pages/office.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/database.dart';
+import 'package:multi_tools_mz/tamplate%20and%20theme/dialogmz.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/info_basic.dart';
+import 'package:multi_tools_mz/tamplate%20and%20theme/languages.dart';
 
 class DBController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    await DB().createtables();
+    try {
+      await DB().createtables();
+    } catch (e) {
+      null;
+    }
     await getversioninfo();
     update();
   }
 
   requestpost({url, data}) async {
-    List? result;
-    try {
-      var resp = await http.post(Uri.parse(url), body: data);
-      if (resp.statusCode == 200) {
-        result = json.decode(resp.body);
-      }
-    } catch (e) {
-      null;
+    InfoBasic.error = null;
+    var result;
+    var resp = await http.post(Uri.parse(url), body: data);
+    if (resp.statusCode == 200) {
+      result = json.decode(resp.body);
     }
+    try {
+      if (result['status'] != 'done') {
+        InfoBasic.error = result['status'];
+      }
+    } catch (e) {}
     return result;
   }
 
   gettableinfo({required List tablesname, required List infoqueries}) async {
     List clmnames = [];
     List result = [{}];
-
     for (var i in tablesname) {
       result[0].addAll({i: []});
       clmnames.add([]);
-      List resp = await requestpost(
-          url: "${InfoBasic.host}${InfoBasic.customquerypath}",
+      List? resp = await requestpost(
+          url: "${InfoBasic.host}${InfoBasic.selecttable}",
           data: {'customquery': ' desc $i;'});
-      for (var j in resp) {
-        clmnames[tablesname.indexOf(i)]!.add(j[0]);
+      if (resp != null) {
+        for (var j in resp) {
+          clmnames[tablesname.indexOf(i)]!.add(j[0]);
+        }
       }
     }
     for (var i in infoqueries) {
       List? resp = await requestpost(
-          url: "${InfoBasic.host}${InfoBasic.customquerypath}",
+          url: "${InfoBasic.host}${InfoBasic.selecttable}",
           data: {'customquery': infoqueries[infoqueries.indexOf(i)]});
       if (resp != null) {
         for (var j in resp) {
@@ -63,11 +74,13 @@ class DBController extends GetxController {
   }
 
   getversioninfo() async {
-    return await gettableinfo(tablesname: [
-      'version'
-    ], infoqueries: [
-      'select * from version',
-    ]);
+    try {
+      return await gettableinfo(tablesname: [
+        'version'
+      ], infoqueries: [
+        'select * from version',
+      ]);
+    } catch (e) {}
   }
 
   getuserinfo({userid}) async {
@@ -115,18 +128,19 @@ class DBController extends GetxController {
   }
 
   changpass({userid, password}) async {
-    await DBController().requestpost(
-        url: "${InfoBasic.host}${InfoBasic.customquerypath}",
+    var t = await DBController().requestpost(
+        url: "${InfoBasic.host}${InfoBasic.curdtable}",
         data: {
           'customquery':
               "update users set password='$password' where user_id=$userid;"
         });
+    print(t);
   }
 
   getlogsinfo() async {
     List result = [];
     List logs = await DBController().requestpost(
-        url: "${InfoBasic.host}${InfoBasic.customquerypath}",
+        url: "${InfoBasic.host}${InfoBasic.selecttable}",
         data: {'customquery': "select * from logs;"});
     for (var i in logs) {
       result.add([]);

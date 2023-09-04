@@ -9,10 +9,12 @@ import 'package:multi_tools_mz/controllers/db_controller.dart';
 import 'package:multi_tools_mz/pages/homepage.dart';
 import 'package:multi_tools_mz/pages/login.dart';
 import 'package:multi_tools_mz/pages/logs.dart';
+import 'package:multi_tools_mz/pages/office.dart';
 import 'package:multi_tools_mz/pages/splash_screen.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/bottomnavbar.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/database.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/dialogmz.dart';
+import 'package:multi_tools_mz/tamplate%20and%20theme/dropmz.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/info_basic.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/languages.dart';
 import 'package:multi_tools_mz/tamplate%20and%20theme/shared_pre_mz.dart';
@@ -215,18 +217,16 @@ class MainController extends GetxController {
         LogIn.userinfo = SharedPreMz.sharedPreMzGetLogin();
         DB.userinfotable =
             await DBController().getuserinfo(userid: LogIn.userinfo![2]);
-        await DBController().requestpost(
-            url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-            data: {
-              'customquery':
-                  "update users_privileges set mustchgpass=0 where up_user_id=${userinfo[0]['users'][0]['user_id']};"
-            });
-        await DBController().requestpost(
-            url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-            data: {
-              'customquery':
-                  "insert into logs set log='${DB.userinfotable[0]['username']} edit his password',logdate='${DateTime.now()}';"
-            });
+        await DBController()
+            .requestpost(url: "${InfoBasic.host}${InfoBasic.curdtable}", data: {
+          'customquery':
+              "update users_privileges set mustchgpass=0 where up_user_id=${userinfo[0]['users'][0]['user_id']};"
+        });
+        await DBController()
+            .requestpost(url: "${InfoBasic.host}${InfoBasic.curdtable}", data: {
+          'customquery':
+              "insert into logs set log='${DB.userinfotable[0]['username']} edit his password',logdate='${DateTime.now()}';"
+        });
         Get.offNamed('/home');
       } catch (e) {
         LogIn.mainloginerrormsg =
@@ -304,18 +304,16 @@ class MainController extends GetxController {
         await DBController().changpass(
             userid: DB.userinfotable[0]['users'][0]['user_id'],
             password: codepassword(word: newpass));
-        await DBController().requestpost(
-            url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-            data: {
-              'customquery':
-                  "update users_privileges set mustchgpass=0 where up_user_id=${DB.userinfotable[0]['users'][0]['user_id']};"
-            });
-        await DBController().requestpost(
-            url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-            data: {
-              'customquery':
-                  "insert into logs set log='${DB.userinfotable[0]['users'][0]['username']} edit his password',logdate='${DateTime.now()}';"
-            });
+        await DBController()
+            .requestpost(url: "${InfoBasic.host}${InfoBasic.curdtable}", data: {
+          'customquery':
+              "update users_privileges set mustchgpass=0 where up_user_id=${DB.userinfotable[0]['users'][0]['user_id']};"
+        });
+        await DBController()
+            .requestpost(url: "${InfoBasic.host}${InfoBasic.curdtable}", data: {
+          'customquery':
+              "insert into logs set log='${DB.userinfotable[0]['users'][0]['username']} edit his password',logdate='${DateTime.now()}';"
+        });
         DialogMz.wait = false;
         Get.back();
         logout();
@@ -349,18 +347,16 @@ class MainController extends GetxController {
       DialogMz.wait = true;
       update();
       try {
-        await DBController().requestpost(
-            url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-            data: {
-              'customquery':
-                  "update users set fullname='$fullname',mobile='$mobile',email='$email' where user_id=${DB.userinfotable[0]['users'][0]['user_id']};"
-            });
-        await DBController().requestpost(
-            url: "${InfoBasic.host}${InfoBasic.customquerypath}",
-            data: {
-              'customquery':
-                  "insert into logs set log='${DB.userinfotable[0]['users'][0]['username']} edit personal Info As fullname=$fullname,mobile=$mobile,email=$email',logdate='${DateTime.now()}';"
-            });
+        await DBController()
+            .requestpost(url: "${InfoBasic.host}${InfoBasic.curdtable}", data: {
+          'customquery':
+              "update users set fullname='$fullname',mobile='$mobile',email='$email' where user_id=${DB.userinfotable[0]['users'][0]['user_id']};"
+        });
+        await DBController()
+            .requestpost(url: "${InfoBasic.host}${InfoBasic.curdtable}", data: {
+          'customquery':
+              "insert into logs set log='${DB.userinfotable[0]['users'][0]['username']} edit personal Info As fullname=$fullname,mobile=$mobile,email=$email',logdate='${DateTime.now()}';"
+        });
         DB.userinfotable = await DBController()
             .getuserinfo(userid: DB.userinfotable[0]['users'][0]['user_id']);
 
@@ -459,6 +455,191 @@ class MainController extends GetxController {
         i['visible'] = true;
       }
     }
+    update();
+  }
+
+  openclosedropMz() {
+    Office.searchcontroller.text = '';
+    for (var i in Office.offmem) {
+      i['visiblesearch'] = true;
+    }
+    DropMz.openclosedrop = DropMz.openclosedrop == true ? false : true;
+    update();
+  }
+
+  addusertooffice({index}) {
+    Office.offmem[index]['visible'] =
+        Office.offmem[index]['visible'] == true ? false : true;
+    update();
+  }
+
+  searchindropMz({list, range, word}) {
+    search(list: list, range: range, word: word);
+    list[0]['visiblesearch'] = true;
+    update();
+  }
+
+  checkboxpriv({x, index, name}) {
+    Office.priv[index][name] = x;
+    update();
+  }
+
+  radiopriv({index, name}) {
+    Office.priv[index][name] =
+        Office.priv[index][name] == 'supervisor' ? 'employee' : 'supervisor';
+    update();
+  }
+
+  setpriv({index, remove = false}) {
+    Office.offmem[index]['Position'] = Office.priv[index - 1]['Position'];
+    for (var i in Office.offmem) {
+      for (var j
+          in i.keys.toList().where((element) => element.contains("P-"))) {
+        Office.offmem[index][j] = Office.priv[index - 1][j];
+      }
+    }
+    Office.offmem[index]['visible'] = remove == false ? true : false;
+    Get.back();
+    update();
+  }
+
+  setnotifi(x) {
+    Office.notifi = x;
+    update();
+  }
+
+  addoffice() async {
+    DialogMz.errormsg = null;
+    List queries = [
+      '''
+insert into office(officename,chatid,notifi)values('${Office.officenamecontroller.text}','${Office.officechatidcontroller.text}',${Office.notifi});
+''',
+    ];
+    for (var i
+        in Office.offmem.where((element) => element['visible'] == false)) {
+      queries.add('''
+            insert into users_priv_office (upo_user_id,upo_office_id,position,addtask,addouttask,addremind,addtodo,addping,addemailtest)
+            values(
+            ${i['user_id']},
+            (select max(office_id) from office),
+            '${i['Position']}',
+            ${i['P-addtask'] == true ? 1 : 0},
+            ${i['P-addouttask'] == true ? 1 : 0},
+            ${i['P-addremind'] == true ? 1 : 0},
+            ${i['P-addtodo'] == true ? 1 : 0},
+            ${i['P-addping'] == true ? 1 : 0},
+            ${i['P-addemailtest'] == true ? 1 : 0}
+            );
+            ''');
+    }
+    queries.add('''
+insert into logs(log,logdate)values
+("${LogIn.userinfo![0]} add a new office _name: Officename ${Office.officenamecontroller.text}",
+"${DateTime.now()}");
+      ''');
+    if (Office.officenamecontroller.text.isEmpty) {
+      DialogMz.errormsg = Lang.lang['fullnamecheckempty']
+          [Lang.langlist.indexOf(Lang.selectlanguage)];
+      for (var i = 0; i < DialogMz.selectedlist.length; i++) {
+        DialogMz.selectedlist[i] = false;
+      }
+      DialogMz.selectedlist[0] = true;
+    } else {
+      DialogMz.wait = true;
+      update();
+      try {
+        l:
+        for (var q in queries) {
+          await DBController().requestpost(
+              url: "${InfoBasic.host}${InfoBasic.curdtable}",
+              data: {'customquery': '$q'});
+          {
+            if (InfoBasic.error != null) {
+              if (InfoBasic.error!.contains("Duplicate")) {
+                DialogMz.errormsg = Lang.lang['duplicate']
+                    [Lang.langlist.indexOf(Lang.selectlanguage)];
+                break l;
+              } else {
+                DialogMz.errormsg = InfoBasic.error;
+              }
+            }
+          }
+        }
+        if (InfoBasic.error == null) {
+          Get.back();
+        }
+        DB.allofficeinfotable = await DBController().getallofficeinfotable();
+      } catch (e) {
+        DialogMz.errormsg = LogIn.mainloginerrormsg =
+            "${Lang.lang['mainloginerrormsg'][Lang.langlist.indexOf(Lang.selectlanguage)]}";
+      }
+    }
+    DialogMz.wait = false;
+    update();
+  }
+
+  removeoffice({officeid}) async {
+    List queries = [
+      '''
+insert into logs(log,logdate)values
+("${LogIn.userinfo![0]} delete office _Officename ${DB.allofficeinfotable[0]['office'][DB.allofficeinfotable[0]['office'].indexWhere((r) => r['office_id'] == officeid)]['officename']}",
+"${DateTime.now()}");
+      ''',
+      '''
+delete from office where office_id=$officeid;
+''',
+      '''
+delete from users_priv_office where upo_office_id=$officeid;
+''',
+      '''
+update tasks set task_office_id=null where task_office_id=$officeid;
+''',
+      '''
+update remind set remind_office_id=null where remind_office_id=$officeid;
+''',
+      '''
+update todo set todo_office_id=null where todo_office_id=$officeid;
+'''
+    ];
+
+    DialogMz.errormsg = null;
+    try {
+      for (var q in queries) {
+        await DBController().requestpost(
+            url: "${InfoBasic.host}${InfoBasic.curdtable}",
+            data: {'customquery': '$q'});
+      }
+      DB.allofficeinfotable = await DBController().getallofficeinfotable();
+    } catch (e) {
+      DialogMz.errormsg = LogIn.mainloginerrormsg =
+          "${Lang.lang['mainloginerrormsg'][Lang.langlist.indexOf(Lang.selectlanguage)]}";
+    }
+    for (var i in Office.moreitems) {
+      for (var t in i) {
+        t['visible0'] = false;
+      }
+    }
+    DialogMz.wait = false;
+    update();
+  }
+
+  showmoreitems(e) {
+    for (var i
+        in Office.moreitems[DB.allofficeinfotable[0]['office'].indexOf(e)]) {
+      i['visible0'] = i['visible0'] == true ? false : true;
+      i['visible1'] = false;
+    }
+    update();
+  }
+
+  showmoreitemsConfirm({e, et}) {
+    for (var i
+        in Office.moreitems[DB.allofficeinfotable[0]['office'].indexOf(e)]) {
+      i['visible1'] = false;
+    }
+    Office.moreitems[DB.allofficeinfotable[0]['office'].indexOf(e)][Office
+        .moreitems[DB.allofficeinfotable[0]['office'].indexOf(e)]
+        .indexOf(et)]['visible1'] = true;
     update();
   }
 }

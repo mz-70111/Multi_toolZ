@@ -35,9 +35,19 @@ class BottomNavBarMz extends StatelessWidget {
             'notifi': 'ok'
           },
           {
-            'visible': DB.userinfotable[0]['admin'] == '1' ? true : false,
+            'visible':
+                DB.userinfotable[0]['users_privileges'][0]['admin'] == '1'
+                    ? true
+                    : false,
             'icon': Icons.report,
             'action': () => mainController.navbaraction(x: 2),
+            'index': 2,
+            'size': 1,
+          },
+          {
+            'visible': false,
+            'icon': Icons.report,
+            'action': () => mainController.navbaraction(x: 3),
             'index': 2,
             'size': 1,
           }
